@@ -10,11 +10,13 @@ DJANGO_APPLICATIONS = [
 
 CUSTOM_APPLICATIONS = [
     'apps.core',
+    'apps.assets',
     'apps.userprofile',
+    'apps.payments_and_subscription',
 ]
 
 THIRD_PARTY_APPLICATIONS = [
-
+    'drf_yasg',
     'corsheaders',
     'rest_framework',
 ]
