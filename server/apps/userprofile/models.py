@@ -19,8 +19,8 @@ class UserProfile(AbstractTimeStampModel):
     subscription = models.ForeignKey(
         'payments_and_subscription.Subscription', on_delete=models.DO_NOTHING,
         related_name='user_subscription', null=True, blank=True)
-    subscription_start_date = models.DateField(null=True, blank=True)
-    subscription_end_date = models.DateField(null=True, blank=True)
+    subscription_start_date = models.DateTimeField(null=True, blank=True)
+    subscription_end_date = models.DateTimeField(null=True, blank=True)
     calling_code = models.ForeignKey(
         'assets.CallingCodeWithName', on_delete=models.CASCADE,
         related_name='user_country_codes',
@@ -36,6 +36,7 @@ class UserProfile(AbstractTimeStampModel):
                                  null=True, blank=True)
     image = models.ImageField(upload_to='images', blank=True, null=True)
     profile_status = models.CharField(max_length=255, default='inactive', choices=PROFILE_STATUS)
+    is_subscribed = models.BooleanField(default=False)
 
 
     def __str__(self):

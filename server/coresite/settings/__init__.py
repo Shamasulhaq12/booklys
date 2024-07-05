@@ -7,3 +7,4 @@ from .restframework import *
 from .corsheader import *
 from .environment import *
 from .file_storage import *
+from .payments import *
