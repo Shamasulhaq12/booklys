@@ -29,6 +29,7 @@ urlpatterns = [
     path('api/user/', include('apps.core.urls')),
     path('api/user-profile/', include('apps.userprofile.urls')),
     path('api/payments-and-subscription/', include('apps.payments_and_subscription.urls')),
+    path('api/services/', include('apps.services.urls')),
     path('api/api-auth/', include('rest_framework.urls')),
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

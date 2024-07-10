@@ -13,6 +13,7 @@ CUSTOM_APPLICATIONS = [
     'apps.assets',
     'apps.userprofile',
     'apps.payments_and_subscription',
+    'apps.services',
 ]
 
 THIRD_PARTY_APPLICATIONS = [
