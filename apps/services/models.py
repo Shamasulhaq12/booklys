@@ -5,6 +5,7 @@ from coresite.mixin import AbstractTimeStampModel
 class Company(AbstractTimeStampModel):
     name = models.CharField(max_length=255)
     owner = models.ForeignKey('userprofile.UserProfile', on_delete=models.CASCADE, related_name='company_owner')
+    category = models.ForeignKey('assets.Categories', on_delete=models.CASCADE, related_name='company_category', null=True, blank=True)
     address = models.TextField(null=True, blank=True)
     company_description = models.TextField(null=True, blank=True)
     about_company = models.TextField(null=True, blank=True)

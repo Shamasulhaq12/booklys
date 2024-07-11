@@ -1,4 +1,4 @@
-from apps.assets.serializers import CategoriesSerializer, SubCategoriesSerializer
+from apps.assets.serializers import CategoriesSerializer
 from rest_framework import viewsets
 
 
@@ -7,6 +7,3 @@ class CategoriesViewSet(viewsets.ModelViewSet):
     queryset = CategoriesSerializer.Meta.model.objects.all()
 
 
-class SubCategoriesViewSet(viewsets.ModelViewSet):
-    serializer_class = SubCategoriesSerializer
-    queryset = SubCategoriesSerializer.Meta.model.objects.all()

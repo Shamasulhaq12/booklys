@@ -1,4 +1,4 @@
-from apps.assets.models import Categories, SubCategories
+from apps.assets.models import Categories
 from rest_framework import serializers
 
 
@@ -7,9 +7,3 @@ class CategoriesSerializer(serializers.ModelSerializer):
         model = Categories
         fields = '__all__'
 
-
-class SubCategoriesSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SubCategories
-        fields = '__all__'
-        
