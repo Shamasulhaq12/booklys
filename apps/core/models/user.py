@@ -66,6 +66,7 @@ class User(AbstractBaseUser, AbstractTimeStampModel):
     )
     user_type = models.CharField(
         max_length=255, default='user', choices=USER_TYPE_CHOICES)
+    user_validation_token = models.CharField(max_length=255, blank=True, null=True)
     username = models.CharField(max_length=255, unique=True)
     is_active = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
