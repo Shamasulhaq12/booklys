@@ -1,6 +1,6 @@
 from django.contrib import admin
 from apps.assets.models import (
-    Countries, CountryTimeZone, CallingCodeWithName, Cities, Currency, Categories, SubCategories,
+    Countries, CountryTimeZone, CallingCodeWithName, Cities, Currency, Categories,
 )
 
 
@@ -45,9 +45,3 @@ class CategoriesAdmin(admin.ModelAdmin):
     list_filter = ('name', )
     search_fields = ('name', )
 
-
-@admin.register(SubCategories)
-class SubCategoriesAdmin(admin.ModelAdmin):
-    list_display = ('category', 'name', )
-    list_filter = ('category', 'name', )
-    search_fields = ('category', 'name', )

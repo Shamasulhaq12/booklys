@@ -24,6 +24,8 @@ class CompanySerializer(serializers.ModelSerializer):
     company_images = CompanyImagesSerializer(many=True, read_only=True)
     company_services = CompanyServicesSerializer(many=True, read_only=True)
     company_staff = CompanyStaffSerializer(many=True, read_only=True)
+    category_name = serializers.CharField(source='category.name', read_only=True)
+    category_id = serializers.IntegerField(source='category.id', read_only=True)
 
     class Meta:
         model = Company
