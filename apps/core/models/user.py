@@ -49,7 +49,8 @@ class UserManager(BaseUserManager):
 
 
 USER_TYPE_CHOICES = (
-    ('user', 'User'),
+    ('client', 'client'),
+    ('owner', 'Owner'),
     ('admin', 'Admin'),
     ('super_admin', 'Super Admin'),
 
@@ -65,7 +66,7 @@ class User(AbstractBaseUser, AbstractTimeStampModel):
         unique=True,
     )
     user_type = models.CharField(
-        max_length=255, default='user', choices=USER_TYPE_CHOICES)
+        max_length=255, default='client', choices=USER_TYPE_CHOICES)
     user_validation_token = models.CharField(max_length=255, blank=True, null=True)
     username = models.CharField(max_length=255, unique=True)
     is_active = models.BooleanField(default=False)
