@@ -3,5 +3,5 @@ from .geolocations import (
     CountriesViewSet, CurrencyViewSet, CallingCodeWithNameViewSet,
 )
 from .categories_managment import (
-    CategoriesViewSet, SubCategoriesViewSet,
+    CategoriesViewSet,
 )
