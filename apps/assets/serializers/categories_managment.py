@@ -1,4 +1,4 @@
-from apps.assets.models import Categories
+from apps.assets.models import Categories, PriceGroup
 from rest_framework import serializers
 
 
@@ -7,3 +7,7 @@ class CategoriesSerializer(serializers.ModelSerializer):
         model = Categories
         fields = '__all__'
 
+class PriceGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PriceGroup
+        fields = '__all__'

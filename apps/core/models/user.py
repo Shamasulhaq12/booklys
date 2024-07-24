@@ -51,6 +51,7 @@ class UserManager(BaseUserManager):
 USER_TYPE_CHOICES = (
     ('client', 'client'),
     ('owner', 'Owner'),
+    ('staff', 'Staff'),
     ('admin', 'Admin'),
     ('super_admin', 'Super Admin'),
 
