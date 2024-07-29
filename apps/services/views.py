@@ -1,7 +1,7 @@
-from .serializers import CompanySerializer, CompanyStaffSerializer, CompanyServicesSerializer, CompanyImagesSerializer
+from .serializers import CompanySerializer, CompanyStaffSerializer, ServicesSerializer, CompanyImagesSerializer
 from rest_framework import viewsets
 from rest_framework.generics import DestroyAPIView, UpdateAPIView
-from .models import Company, CompanyImages, CompanyServices, CompanyStaff
+from .models import Company, CompanyImages, Services, CompanyStaff, ServicePrice, BookingFields
 
 
 class CompanyViewSet(viewsets.ModelViewSet):
@@ -11,29 +11,23 @@ class CompanyViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return self.queryset.filter(owner=self.request.user.profile)
 
-    def perform_create(self, serializer):
-        company_images = serializer.validated_data.pop('company_images', None)
-        company_services = serializer.validated_data.pop('company_services', None)
-        company_staff = serializer.validated_data.pop('company_staff', None)
-        company = serializer.save(owner=self.request.user.profile)
-        for image in company_images:
-            CompanyImages.objects.create(company=company, **image)
-        for service in company_services:
-            CompanyServices.objects.create(company=company, **service)
-        for staff in company_staff:
-            CompanyStaff.objects.create(company=company, **staff)
 
-    def perform_update(self, serializer):
-        company_images = serializer.validated_data.pop('company_images', None)
-        company_services = serializer.validated_data.pop('company_services', None)
-        company_staff = serializer.validated_data.pop('company_staff', None)
-        company = serializer.save(owner=self.request.user.profile)
-        for image in company_images:
-            CompanyImages.objects.create(company=company, **image)
-        for service in company_services:
-            CompanyServices.objects.create(company=company, **service)
-        for staff in company_staff:
-            CompanyStaff.objects.create(company=company, **staff)
+class ServicesViewSet(viewsets.ModelViewSet):
+    serializer_class = ServicesSerializer
+    queryset = Services.objects.all()
+
+    def get_queryset(self):
+        return self.queryset.filter(company__owner=self.request.user.profile)
+
+    def perform_create(self, serializer):
+        service_price = serializer.validated_data.pop('service_price')
+        booking_fields = serializer.validated_data.pop('service_booking_fields')
+        service = serializer.save()
+        for price in service_price:
+            ServicePrice.objects.create(service=service, **price)
+        for field in booking_fields:
+            BookingFields.objects.create(service=service, **field)
+
 
 
 
@@ -45,9 +39,9 @@ class RemoveCompanyStaffAPIView(DestroyAPIView):
         return self.queryset.filter(company__owner=self.request.user.profile)
 
 
-class RemoveCompanyServicesAPIView(DestroyAPIView):
-    queryset = CompanyServices.objects.all()
-    serializer_class = CompanyServicesSerializer
+class RemoveServicesAPIView(DestroyAPIView):
+    queryset = Services.objects.all()
+    serializer_class = ServicesSerializer
 
     def get_queryset(self):
         return self.queryset.filter(company__owner=self.request.user.profile)
@@ -70,8 +64,8 @@ class UpdateCompanyStaffAPIView(UpdateAPIView):
 
 
 class UpdateCompanyServicesAPIView(UpdateAPIView):
-    queryset = CompanyServices.objects.all()
-    serializer_class = CompanyServicesSerializer
+    queryset = Services.objects.all()
+    serializer_class = ServicesSerializer
 
     def get_queryset(self):
         return self.queryset.filter(company__owner=self.request.user.profile)

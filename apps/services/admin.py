@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Company, CompanyImages, CompanyServices, CompanyStaff
+from .models import Company, CompanyImages, Services, CompanyStaff
 
 
 class CompanyImagesInline(admin.TabularInline):
@@ -8,7 +8,7 @@ class CompanyImagesInline(admin.TabularInline):
 
 
 class CompanyServicesInline(admin.TabularInline):
-    model = CompanyServices
+    model = Services
     extra = 1
 
 
