@@ -6,10 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 
 
-
 User = get_user_model()
-
-
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -21,6 +18,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             'access': response.data['access'],
             'refresh': response.data['refresh'],
             'user': serializer.data,
+            'is_payment_verified': user.profile.is_payment_verified
         }, status=status.HTTP_200_OK)
 
 

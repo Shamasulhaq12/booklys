@@ -31,6 +31,7 @@ class UserProfile(AbstractTimeStampModel):
     social_security_number = models.CharField(max_length=255, null=True, blank=True)
     subscription_start_date = models.DateTimeField(null=True, blank=True)
     subscription_end_date = models.DateTimeField(null=True, blank=True)
+    is_payment_verified = models.BooleanField(default=False)
     calling_code = models.ForeignKey(
         'assets.CallingCodeWithName', on_delete=models.CASCADE,
         related_name='user_country_codes',
