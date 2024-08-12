@@ -14,6 +14,7 @@ CUSTOM_APPLICATIONS = [
     'apps.userprofile',
     'apps.payments_and_subscription',
     'apps.services',
+    'apps.booking',
 ]
 
 THIRD_PARTY_APPLICATIONS = [
