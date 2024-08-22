@@ -16,8 +16,8 @@ class BookingsViewSet(viewsets.ModelViewSet):
         filters.OrderingFilter,
         backend_filters.DjangoFilterBackend,
     ]
-    search_fields = ['name', 'description', 'price']
-    ordering_fields = ['id', 'price', 'created_at', 'updated_at']
+    search_fields = ['name', 'description', 'total_price']
+    ordering_fields = ['id', 'total_price', 'created_at', 'updated_at']
     filterset_class = BookingsFilter
     pagination_class = OurLimitOffsetPagination
 

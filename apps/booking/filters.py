@@ -9,4 +9,4 @@ class BookingsFilter(backend_filters.FilterSet):
 
     class Meta:
         model = Bookings
-        fields = ['name', 'description', 'price','booking_status', 'max_price', 'min_price']
+        fields = ['name', 'description','booking_status', 'max_price', 'min_price']
