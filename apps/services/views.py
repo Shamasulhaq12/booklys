@@ -1,7 +1,7 @@
 from .serializers import CompanySerializer, CompanyStaffSerializer, ServicesSerializer, CompanyImagesSerializer
 from rest_framework import viewsets
 from rest_framework.generics import DestroyAPIView, UpdateAPIView
-from .models import Company, CompanyImages, Services, CompanyStaff, ServicePrice, BookingFields
+from .models import Company, CompanyImages, Services, CompanyStaff, BookingFields
 
 
 class CompanyViewSet(viewsets.ModelViewSet):
@@ -20,13 +20,11 @@ class ServicesViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(company__owner=self.request.user.profile)
 
     def perform_create(self, serializer):
-        service_price = serializer.validated_data.pop('service_price')
-        booking_fields = serializer.validated_data.pop('service_booking_fields')
+        booking_fields = serializer.validated_data.pop('service_booking_fields', None)
         service = serializer.save()
-        for price in service_price:
-            ServicePrice.objects.create(service=service, **price)
-        for field in booking_fields:
-            BookingFields.objects.create(service=service, **field)
+        if booking_fields:
+            for field in booking_fields:
+                BookingFields.objects.create(service=service, **field)
 
 
 

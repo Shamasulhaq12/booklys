@@ -18,6 +18,7 @@ class PaymentDetails(AbstractTimeStampModel):
     user = models.ForeignKey("userprofile.UserProfile",on_delete=models.CASCADE, related_name="user_payment_intent")
     payment_id = models.CharField(max_length=255)
     payment_status = models.CharField(max_length=255)
+    booking = models.ForeignKey('booking.Bookings', on_delete=models.CASCADE, related_name='booking_payment', null=True, blank=True)
     payment_amount = models.CharField(max_length=255)
     payment_currency = models.CharField(max_length=255)
     payment_time = models.DateTimeField(auto_now_add=True)

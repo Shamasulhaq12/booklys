@@ -28,6 +28,7 @@ urlpatterns = [
     path('api/user-profile/', include('apps.userprofile.urls')),
     path('api/payments-and-subscription/', include('apps.payments_and_subscription.urls')),
     path('api/assets/', include('apps.assets.urls')),
+    path('api/booking/', include('apps.booking.urls')),
     path('api/services/', include('apps.services.urls')),
     path('api/api-auth/', include('rest_framework.urls')),
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),

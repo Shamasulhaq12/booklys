@@ -1,4 +1,4 @@
-from .models import Company, CompanyImages, Services, CompanyStaff, ServicePrice, BookingFields
+from .models import Company, CompanyImages, Services, CompanyStaff, BookingFields
 from rest_framework import serializers
 
 
@@ -13,15 +13,9 @@ class BookingFieldsSerializer(serializers.ModelSerializer):
         model = BookingFields
         fields = '__all__'
 
-class ServicePriceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ServicePrice
-        fields = '__all__'
-
 class ServicesSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)
     category_id = serializers.IntegerField(source='category.id', read_only=True)
-    service_price = ServicePriceSerializer(many=True)
     service_booking_fields = BookingFieldsSerializer(many=True)
     class Meta:
         model = Services
