@@ -21,7 +21,7 @@ class Bookings(AB):
     service = models.ForeignKey('services.Services', on_delete=models.CASCADE, related_name='service_bookings')
     email = models.EmailField(blank=True, null=True)
     user = models.ForeignKey('userprofile.UserProfile', on_delete=models.CASCADE, related_name='client_profile', null=True, blank=True)
-
+    booking_timing = models.DateTimeField()
     booking_status = models.CharField(max_length=255, choices=BOOKINGSTATUS, default='Pending')
     payment_type = models.CharField(max_length=255, choices=PAYMENT_TYPE, default='on_the_spot')
     is_active = models.BooleanField(default=True)
