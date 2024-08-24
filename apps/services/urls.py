@@ -5,7 +5,8 @@ from .views import (
     CompanyViewSet, RemoveServicesAPIView,
     RemoveCompanyImagesAPIView, RemoveCompanyStaffAPIView,
     UpdateCompanyServicesAPIView, UpdateCompanyImagesAPIView, UpdateCompanyStaffAPIView,
-    ServicesViewSet
+    ServicesViewSet, PublicServicesListAPIView, PublicServicesDetailAPIView,
+    PublicCompanyListAPIView, PublicCompanyDetailAPIView
 )
 
 
@@ -16,6 +17,8 @@ router.register('services', ServicesViewSet, basename='services')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('public-services/', PublicServicesListAPIView.as_view(), name='public-services'),
+    path('public-services/<int:pk>/', PublicServicesDetailAPIView.as_view(), name='public-services-detail'),
     path('remove-company-services/<int:pk>/', RemoveServicesAPIView.as_view(), name='remove-company-services'),
     path('remove-company-images/<int:pk>/', RemoveCompanyImagesAPIView.as_view(), name='remove-company-images'),
     path('remove-company-staff/<int:pk>/', RemoveCompanyStaffAPIView.as_view(), name='remove-company-staff'),
