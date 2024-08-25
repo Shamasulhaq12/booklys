@@ -1,9 +1,10 @@
 from .serializers import CompanySerializer, CompanyStaffSerializer, ServicesSerializer, CompanyImagesSerializer
+
 from rest_framework import viewsets
 from rest_framework.generics import DestroyAPIView, UpdateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny
 
-from .models import Company, CompanyImages, Services, CompanyStaff, BookingFields
+from .models import Company, CompanyImages, Services, CompanyStaff, BookingFields, StaffSlots
 from django.db.models import Avg
 
 
@@ -14,8 +15,31 @@ class CompanyViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         owner = self.request.user.profile
-        serializer.save(owner=owner)
+        company_staff = serializer.validated_data.pop('company_staff', None)
+        if company_staff:
+            company = serializer.save(owner=owner)
+            for staff in company_staff:
+                slots = staff.pop('staff_slots', None)
+                staff = CompanyStaff.objects.create(company=company, **staff)
+                if slots:
+                    for slot in slots:
+                        StaffSlots.objects.create(staff=staff, **slot)
+        else:
+            serializer.save(owner=owner)
 
+    def perform_update(self, serializer):
+        company_staff = serializer.validated_data.pop('company_staff', None)
+        company = serializer.save()
+        if company_staff:
+            company.company_staff.all().delete()
+            for staff in company_staff:
+                slots = staff.pop('staff_slots', None)
+                staff = CompanyStaff.objects.create(company=company, **staff)
+                if slots:
+                    for slot in slots:
+                        StaffSlots.objects.create(staff=staff, **slot)
+        else:
+            serializer.save()
     def get_queryset(self):
         return self.queryset.filter(owner=self.request.user.profile)
 

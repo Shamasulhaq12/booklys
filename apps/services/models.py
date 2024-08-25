@@ -93,7 +93,7 @@ class BookingFields(AbstractTimeStampModel):
 
 class CompanyStaff(AbstractTimeStampModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='company_staff')
-    staff_member= models.ForeignKey('userprofile.UserProfile', on_delete=models.CASCADE, related_name='company_staff')
+    staff_member = models.ForeignKey('userprofile.UserProfile', on_delete=models.CASCADE, related_name='company_staff')
 
 
     class Meta:
@@ -101,4 +101,19 @@ class CompanyStaff(AbstractTimeStampModel):
         verbose_name_plural = 'Company Staff'
 
 
+DAY_CHOICES = (
+    "weekdays", "Weekdays",
+    "weekends", "Weekends",
+    "all", "All",
+)
 
+class StaffSlots(AbstractTimeStampModel):
+    staff = models.ForeignKey(CompanyStaff, on_delete=models.CASCADE, related_name='staff_slots')
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    days = models.CharField(max_length=255,choices=DAY_CHOICES, default='all')
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Staff Slot'
+        verbose_name_plural = 'Staff Slots'

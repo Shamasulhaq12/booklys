@@ -1,9 +1,15 @@
-from .models import Company, CompanyImages, Services, CompanyStaff, BookingFields
+from .models import Company, CompanyImages, Services, CompanyStaff, BookingFields, StaffSlots
 from rest_framework import serializers
 from apps.booking.serializers import  ServiceFeedbackSerializer
 
 
+class StaffSlotsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StaffSlots
+        fields = '__all__'
+
 class CompanyStaffSerializer(serializers.ModelSerializer):
+    staff_slots = StaffSlotsSerializer(many=True)
     class Meta:
         model = CompanyStaff
         fields = '__all__'
@@ -35,7 +41,7 @@ class CompanyImagesSerializer(serializers.ModelSerializer):
 class CompanySerializer(serializers.ModelSerializer):
     company_images = CompanyImagesSerializer(many=True, read_only=True)
     company_services = ServicesSerializer(many=True, read_only=True)
-    company_staff = CompanyStaffSerializer(many=True, read_only=True)
+    company_staff = CompanyStaffSerializer(many=True)
     category_name = serializers.CharField(source='category.name', read_only=True)
     category_id = serializers.IntegerField(source='category.id', read_only=True)
     company_feedback = ServiceFeedbackSerializer(many=True, read_only=True)
