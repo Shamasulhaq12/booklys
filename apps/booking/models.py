@@ -59,7 +59,7 @@ class ClientFeedback(AB):
         ]
 
 class ServiceFeedback(AB):
-    service = models.ForeignKey('services.Services', on_delete=models.CASCADE, related_name='service_feedback')
+    service = models.ForeignKey('services.Company', on_delete=models.CASCADE, related_name='company_feedback')
     rating = models.FloatField(
         validators=[MinValueValidator(1), MaxValueValidator(5)])
     feedback = models.TextField()

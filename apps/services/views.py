@@ -4,11 +4,12 @@ from rest_framework.generics import DestroyAPIView, UpdateAPIView, ListAPIView, 
 from rest_framework.permissions import AllowAny
 
 from .models import Company, CompanyImages, Services, CompanyStaff, BookingFields
+from django.db.models import Avg
 
 
 class CompanyViewSet(viewsets.ModelViewSet):
     serializer_class = CompanySerializer
-    queryset = Company.objects.all()
+    queryset = Company.objects.annotate(rating=Avg('company_feedback__rating'))
 
 
     def perform_create(self, serializer):

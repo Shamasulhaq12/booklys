@@ -2,13 +2,6 @@ from rest_framework import serializers
 from .models import Bookings, ClientFeedback, ServiceFeedback
 
 
-class BookingsSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Bookings
-        fields = '__all__'
-        read_only_fields = ('created_at', 'updated_at')
-
-
 class ClientFeedbackSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClientFeedback
@@ -21,3 +14,12 @@ class ServiceFeedbackSerializer(serializers.ModelSerializer):
         model = ServiceFeedback
         fields = '__all__'
         read_only_fields = ('created_at', 'updated_at')
+
+class BookingsSerializer(serializers.ModelSerializer):
+    booking_feedback = ClientFeedbackSerializer(many=True, read_only=True)
+    class Meta:
+        model = Bookings
+        fields = '__all__'
+        read_only_fields = ('created_at', 'updated_at')
+
+
