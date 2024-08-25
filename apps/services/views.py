@@ -10,8 +10,14 @@ class CompanyViewSet(viewsets.ModelViewSet):
     serializer_class = CompanySerializer
     queryset = Company.objects.all()
 
+
+    def perform_create(self, serializer):
+        owner = self.request.user.profile
+        serializer.save(owner=owner)
+
     def get_queryset(self):
         return self.queryset.filter(owner=self.request.user.profile)
+
 
 class PublicCompanyListAPIView(ListAPIView):
     serializer_class = CompanySerializer
