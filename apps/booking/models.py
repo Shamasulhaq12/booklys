@@ -1,5 +1,6 @@
 from django.db import models
 from coresite.mixin import AbstractTimeStampModel as AB
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 BOOKINGSTATUS=(
@@ -32,6 +33,43 @@ class Bookings(AB):
         verbose_name = 'Booking'
         verbose_name_plural = 'Bookings'
         db_table = 'bookings'
+        ordering = ['-id']
+        indexes = [
+            models.Index(fields=['-id']),
+            models.Index(fields=['-created_at']),
+        ]
+
+
+class ClientFeedback(AB):
+    booking = models.ForeignKey(Bookings, on_delete=models.CASCADE, related_name='booking_feedback')
+    rating = models.FloatField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)])
+    user = models.ForeignKey('userprofile.UserProfile', on_delete=models.CASCADE, related_name='client_feedback')
+    feedback = models.TextField()
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Client Feedback'
+        verbose_name_plural = 'Client Feedback'
+        db_table = 'client_feedback'
+        ordering = ['-id']
+        indexes = [
+            models.Index(fields=['-id']),
+            models.Index(fields=['-created_at']),
+        ]
+
+class ServiceFeedback(AB):
+    service = models.ForeignKey('services.Services', on_delete=models.CASCADE, related_name='service_feedback')
+    rating = models.FloatField(
+        validators=[MinValueValidator(1), MaxValueValidator(5)])
+    feedback = models.TextField()
+    user = models.ForeignKey('userprofile.UserProfile', on_delete=models.CASCADE, related_name='service_feedback')
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Service Feedback'
+        verbose_name_plural = 'Service Feedback'
+        db_table = 'service_feedback'
         ordering = ['-id']
         indexes = [
             models.Index(fields=['-id']),

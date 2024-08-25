@@ -1,11 +1,61 @@
 from rest_framework import viewsets
-from .serializers import BookingsSerializer
+from .serializers import BookingsSerializer, ClientFeedbackSerializer, ServiceFeedbackSerializer
 from rest_framework import filters
 from django_filters import rest_framework as backend_filters
 from .filters import BookingsFilter
 from utils.paginations import OurLimitOffsetPagination
 
 
+
+class ClientFeedbackViewSet(viewsets.ModelViewSet):
+    serializer_class = ClientFeedbackSerializer
+    queryset = ClientFeedbackSerializer.Meta.model.objects.all()
+    filter_backends = [
+        filters.SearchFilter,
+        filters.OrderingFilter,
+        backend_filters.DjangoFilterBackend,
+    ]
+    ordering_fields = ['id', 'created_at', 'updated_at']
+    filterset_fields = ['rating', 'feedback']
+    pagination_class = OurLimitOffsetPagination
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            if self.request.user.user_type == 'supplier':
+                return self.queryset.filter(service__supplier=self.request.user.profile)
+            return self.queryset.filter(user=self.request.user.profile)
+        return self.queryset.none()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user.profile)
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user.profile)
+
+class ServiceFeedbackViewSet(viewsets.ModelViewSet):
+    serializer_class = ServiceFeedbackSerializer
+    queryset = ServiceFeedbackSerializer.Meta.model.objects.all()
+    filter_backends = [
+        filters.SearchFilter,
+        filters.OrderingFilter,
+        backend_filters.DjangoFilterBackend,
+    ]
+    ordering_fields = ['id', 'created_at', 'updated_at']
+    filterset_fields = ['rating', 'feedback']
+    pagination_class = OurLimitOffsetPagination
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+            if self.request.user.user_type == 'supplier':
+                return self.queryset.filter(service__supplier=self.request.user.profile)
+            return self.queryset.filter(user=self.request.user.profile)
+        return self.queryset.none()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user.profile)
+
+    def perform_update(self, serializer):
+        serializer.save(user=self.request.user.profile)
 
 
 class BookingsViewSet(viewsets.ModelViewSet):
