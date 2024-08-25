@@ -12,6 +12,9 @@ class BookingFieldsSerializer(serializers.ModelSerializer):
     class Meta:
         model = BookingFields
         fields = '__all__'
+        extra_kwargs = {
+            'service': {'required': False}
+        }
 
 class ServicesSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)
