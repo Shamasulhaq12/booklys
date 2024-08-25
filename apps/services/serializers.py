@@ -7,12 +7,18 @@ class StaffSlotsSerializer(serializers.ModelSerializer):
     class Meta:
         model = StaffSlots
         fields = '__all__'
+        extra_kwargs = {
+            'staff': {'required': False}
+        }
 
 class CompanyStaffSerializer(serializers.ModelSerializer):
     staff_slots = StaffSlotsSerializer(many=True)
     class Meta:
         model = CompanyStaff
         fields = '__all__'
+        extra_kwargs = {
+            'company': {'required': False}
+        }
 
 
 class BookingFieldsSerializer(serializers.ModelSerializer):
