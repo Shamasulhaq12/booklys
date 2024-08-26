@@ -19,11 +19,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
         if company_staff:
             company = serializer.save(owner=owner)
             for staff in company_staff:
-                slots = staff.pop('staff_slots', None)
                 staff = CompanyStaff.objects.create(company=company, **staff)
-                if slots:
-                    for slot in slots:
-                        StaffSlots.objects.create(staff=staff, **slot)
         else:
             serializer.save(owner=owner)
 
@@ -33,11 +29,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
         if company_staff:
             company.company_staff.all().delete()
             for staff in company_staff:
-                slots = staff.pop('staff_slots', None)
                 staff = CompanyStaff.objects.create(company=company, **staff)
-                if slots:
-                    for slot in slots:
-                        StaffSlots.objects.create(staff=staff, **slot)
         else:
             serializer.save()
     def get_queryset(self):

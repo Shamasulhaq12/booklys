@@ -108,7 +108,7 @@ DAY_CHOICES = (
 )
 
 class StaffSlots(AbstractTimeStampModel):
-    staff = models.ForeignKey(CompanyStaff, on_delete=models.CASCADE, related_name='staff_slots')
+    staff = models.ForeignKey('userprofile.UserProfile', on_delete=models.CASCADE, related_name='staff_slots')
     start_time = models.TimeField()
     end_time = models.TimeField()
     days = models.CharField(max_length=255,choices=DAY_CHOICES, default='All')

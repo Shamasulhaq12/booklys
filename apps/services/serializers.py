@@ -12,7 +12,6 @@ class StaffSlotsSerializer(serializers.ModelSerializer):
         }
 
 class CompanyStaffSerializer(serializers.ModelSerializer):
-    staff_slots = StaffSlotsSerializer(many=True)
     class Meta:
         model = CompanyStaff
         fields = '__all__'

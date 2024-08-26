@@ -75,3 +75,5 @@ class ServiceFeedback(AB):
             models.Index(fields=['-id']),
             models.Index(fields=['-created_at']),
         ]
+
+
