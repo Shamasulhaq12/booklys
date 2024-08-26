@@ -102,16 +102,20 @@ class CompanyStaff(AbstractTimeStampModel):
 
 
 DAY_CHOICES = (
-    ("weekdays", "Weekdays",),
-    ("weekends", "Weekends",),
-    ("all", "All",)
+    ('Monday', 'Monday'),
+    ('Tuesday', 'Tuesday'),
+    ('Wednesday', 'Wednesday'),
+    ('Thursday', 'Thursday'),
+    ('Friday', 'Friday'),
+    ('Saturday', 'Saturday'),
+    ('Sunday', 'Sunday'),
 )
 
 class StaffSlots(AbstractTimeStampModel):
     staff = models.ForeignKey('userprofile.UserProfile', on_delete=models.CASCADE, related_name='staff_slots')
     start_time = models.TimeField()
     end_time = models.TimeField()
-    days = models.CharField(max_length=255,choices=DAY_CHOICES, default='All')
+    days = models.CharField(max_length=255,choices=DAY_CHOICES, default='Monday')
     is_active = models.BooleanField(default=True)
 
     class Meta:
