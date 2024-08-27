@@ -12,6 +12,12 @@ class StaffSlotsSerializer(serializers.ModelSerializer):
         }
 
 class CompanyStaffSerializer(serializers.ModelSerializer):
+
+    staff_first_name = serializers.CharField(source='staff_member.first_name', read_only=True)
+    staff_last_name = serializers.CharField(source='staff_member.last_name', read_only=True)
+    staff_email = serializers.CharField(source='staff_member.user.email', read_only=True)
+    staff_rating = serializers.SerializerMethodField()
+
     class Meta:
         model = CompanyStaff
         fields = '__all__'
@@ -19,6 +25,8 @@ class CompanyStaffSerializer(serializers.ModelSerializer):
             'company': {'required': False}
         }
 
+    def get_staff_rating(self, obj):
+        return 1
 
 class BookingFieldsSerializer(serializers.ModelSerializer):
     class Meta:
