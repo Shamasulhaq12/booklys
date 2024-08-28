@@ -31,6 +31,14 @@ class AvailableStaffSlotsAPIView(APIView):
 class CompanyViewSet(viewsets.ModelViewSet):
     serializer_class = CompanySerializer
     queryset = Company.objects.annotate(rating=Avg('company_feedback__rating'))
+    filter_backends = [
+        filters.SearchFilter,
+        filters.OrderingFilter,
+        backend_filters.DjangoFilterBackend,
+    ]
+    ordering_fields = ['id', 'created_at', 'updated_at']
+    filterset_fields = ['category', 'is_active']
+    search_fields = ['name', 'company_description']
 
 
     def perform_create(self, serializer):
@@ -60,6 +68,14 @@ class PublicCompanyListAPIView(ListAPIView):
     serializer_class = CompanySerializer
     queryset = Company.objects.all()
     permission_classes = [AllowAny]
+    filter_backends = [
+        filters.SearchFilter,
+        filters.OrderingFilter,
+        backend_filters.DjangoFilterBackend,
+    ]
+    ordering_fields = ['id', 'created_at', 'updated_at']
+    filterset_fields = ['category', 'is_active']
+    search_fields = ['name', 'company_description']
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
