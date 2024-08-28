@@ -1,4 +1,4 @@
-from .serializers import CompanySerializer, CompanyStaffSerializer, ServicesSerializer, CompanyImagesSerializer
+from .serializers import CompanySerializer, CompanyStaffSerializer, ServicesSerializer, CompanyImagesSerializer,UpdateCompanyStaffImageSerializer
 
 from rest_framework import viewsets
 from rest_framework.views import APIView
@@ -18,6 +18,14 @@ class AvailableStaffSlotsAPIView(APIView):
         staff = self.request.GET.get('staff')
 
         return Response({'slots': []})
+
+
+class UpdateCompanyStaffImageAPIView(UpdateAPIView):
+    queryset = CompanyStaff.objects.all()
+    serializer_class = UpdateCompanyStaffImageSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(company__owner=self.request.user.profile)
 
 
 class CompanyStaffViewSet(viewsets.ModelViewSet):

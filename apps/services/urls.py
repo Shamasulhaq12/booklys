@@ -8,7 +8,8 @@ from .views import (
     ServicesViewSet, PublicServicesListAPIView, PublicServicesDetailAPIView,
     PublicCompanyListAPIView, PublicCompanyDetailAPIView,
 CompanyStaffViewSet,
-AvailableStaffSlotsAPIView
+AvailableStaffSlotsAPIView,
+UpdateCompanyStaffImageAPIView,
 )
 
 
@@ -21,6 +22,7 @@ router.register('company-staff', CompanyStaffViewSet, basename='company-staff')
 urlpatterns = [
     path('', include(router.urls)),
     path('available-staff-slots/', AvailableStaffSlotsAPIView.as_view(), name='available-staff-slots'),
+    path('update-company-staff-image/<int:pk>/', UpdateCompanyStaffImageAPIView.as_view(), name='update-company-staff-image'),
     path('public-services/', PublicServicesListAPIView.as_view(), name='public-services'),
     path('public-services/<int:pk>/', PublicServicesDetailAPIView.as_view(), name='public-services-detail'),
     path('public-company/', PublicCompanyListAPIView.as_view(), name='public-company'),

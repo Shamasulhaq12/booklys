@@ -36,6 +36,12 @@ class CompanyStaffSerializer(serializers.ModelSerializer):
     def get_staff_rating(self, obj):
         return 1
 
+class UpdateCompanyStaffImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CompanyStaff
+        fields = ['image']
+
+
 class BookingFieldsSerializer(serializers.ModelSerializer):
     class Meta:
         model = BookingFields
