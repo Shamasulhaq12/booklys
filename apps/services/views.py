@@ -74,7 +74,7 @@ class PublicCompanyListAPIView(ListAPIView):
         backend_filters.DjangoFilterBackend,
     ]
     ordering_fields = ['id', 'created_at', 'updated_at']
-    filterset_fields = [ 'is_active']
+    filterset_fields = [ 'company_services__category__id','is_active']
     search_fields = ['name', 'company_description']
 
     def get_queryset(self):
