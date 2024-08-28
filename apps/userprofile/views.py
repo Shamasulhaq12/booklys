@@ -29,14 +29,14 @@ class UserProfileViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(user__is_active=True, user=self.request.user)
 
     def perform_update(self, serializer):
-        staff_slots = serializer.validated_data.pop('staff_slots',None)
+        staff_slots = serializer.validated_data.pop('staff_slots', None)
         serializer.save()
         if staff_slots:
             for staff_slot in staff_slots:
                 staff_slot = StaffSlots.objects.create(staff=serializer.instance, **staff_slot)
 
     def perform_create(self, serializer):
-        staff_slots = serializer.validated_data.pop('staff_slots',None)
+        staff_slots = serializer.validated_data.pop('staff_slots', None)
         serializer.save()
         if staff_slots:
             for staff_slot in staff_slots:
