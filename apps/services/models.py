@@ -48,12 +48,59 @@ PRICE_TYPE = (
     ('fixed', 'Fixed'),
     ('variable', 'Variable'),
 )
+STAFF_DESIGNATION = (
+    ('employee', 'Employee'),
+    ('consultant', 'Consultant'),
+    ('manager', 'Manager'),
+)
+
+
+class CompanyStaff(AbstractTimeStampModel):
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='company_staff')
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    nick_name = models.CharField(max_length=255, null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
+    designation = models.CharField(max_length=255, choices=STAFF_DESIGNATION, default='employee')
+    image = models.ImageField(upload_to='staff_images/', null=True, blank=True)
+    signature = models.CharField(max_length=255, null=True, blank=True)
+    social_security_number = models.CharField(max_length=255, null=True, blank=True)
+    price_group = models.ForeignKey('assets.PriceGroup', on_delete=models.CASCADE, related_name='user_price_group',
+                                    null=True, blank=True)
+    calling_code = models.ForeignKey('assets.CallingCodeWithName', on_delete=models.CASCADE, related_name='staff_country_codes', null=True, blank=True)
+    is_student = models.BooleanField(default=False)
+    work_from = models.DateTimeField(null=True, blank=True)
+    is_onsite = models.BooleanField(default=False)
+    booking_interval_in_minutes = models.PositiveIntegerField(default=30)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Company Staff'
+        verbose_name_plural = 'Company Staff'
+
+
+class ContactInformation(AbstractTimeStampModel):
+
+    staff = models.ForeignKey(CompanyStaff, on_delete=models.CASCADE, related_name='staff_contacts')
+    phone = models.CharField(max_length=20, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.staff.first_name
+
+    class Meta:
+        verbose_name = 'Contact Information'
+        verbose_name_plural = 'Contact Information'
+
+
 
 
 class Services(AbstractTimeStampModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='company_services')
     service_name = models.CharField(max_length=255)
-    service_provider = models.ForeignKey('userprofile.UserProfile', on_delete=models.CASCADE, related_name='service_provider')
+    service_providers = models.ManyToManyField(CompanyStaff, related_name='service_providers')
     service_type = models.CharField(max_length=255, choices=SERVICES_TYPE, default='basic')
     basic_service = models.ForeignKey('self', on_delete=models.CASCADE, related_name='additional_services', null=True, blank=True)
     service_description = models.TextField(null=True, blank=True)
@@ -91,14 +138,6 @@ class BookingFields(AbstractTimeStampModel):
         verbose_name = 'Booking Field'
         verbose_name_plural = 'Booking Fields'
 
-class CompanyStaff(AbstractTimeStampModel):
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='company_staff')
-    staff_member = models.ForeignKey('userprofile.UserProfile', on_delete=models.CASCADE, related_name='company_staff')
-
-
-    class Meta:
-        verbose_name = 'Company Staff'
-        verbose_name_plural = 'Company Staff'
 
 
 DAY_CHOICES = (
@@ -110,14 +149,18 @@ DAY_CHOICES = (
     ('Saturday', 'Saturday'),
     ('Sunday', 'Sunday'),
 )
-
-class StaffSlots(AbstractTimeStampModel):
-    staff = models.ForeignKey('userprofile.UserProfile', on_delete=models.CASCADE, related_name='staff_slots')
+class WorkSchedule(AbstractTimeStampModel):
+    staff = models.ForeignKey(CompanyStaff, on_delete=models.CASCADE, related_name='staff_schedule')
+    day = models.CharField(max_length=255, choices=DAY_CHOICES)
     start_time = models.TimeField()
     end_time = models.TimeField()
-    days = models.CharField(max_length=255,choices=DAY_CHOICES, default='Monday')
+    start_break_time = models.TimeField(null=True, blank=True)
+    end_break_time = models.TimeField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.staff.first_name
+
     class Meta:
-        verbose_name = 'Staff Slot'
-        verbose_name_plural = 'Staff Slots'
+        verbose_name = 'Work Schedule'
+        verbose_name_plural = 'Work Schedules'

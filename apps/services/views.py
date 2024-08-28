@@ -5,27 +5,59 @@ from rest_framework.views import APIView
 from rest_framework.generics import DestroyAPIView, UpdateAPIView, ListAPIView, RetrieveAPIView
 from rest_framework.permissions import AllowAny
 
-from .models import Company, CompanyImages, Services, CompanyStaff, BookingFields, StaffSlots
+from .models import Company, CompanyImages, Services, CompanyStaff, BookingFields, ContactInformation, WorkSchedule
 from django.db.models import Avg
 from .filters import ServicesFilter
 from rest_framework import filters
 from django_filters import rest_framework as backend_filters
 from rest_framework.response import Response
-from .serializers import StaffSlotsSerializer
 
 
 class AvailableStaffSlotsAPIView(APIView):
     def get(self, request, *args, **kwargs):
-        service = self.request.GET.get('service')
         staff = self.request.GET.get('staff')
-        slots = StaffSlots.objects.filter(staff=staff)
-        filtered_slots = []
-        for slot in slots:
-            if slot.is_active and slot.start_time >= service.start_time and slot.end_time <= service.end_time:
-                filtered_slots.append(slot)
-        serializer = StaffSlotsSerializer(filtered_slots, many=True)
-        return Response(serializer.data)
 
+        return Response({'slots': []})
+
+
+class CompanyStaffViewSet(viewsets.ModelViewSet):
+    serializer_class = CompanyStaffSerializer
+    queryset = CompanyStaff.objects.all()
+    filter_backends = [
+        filters.SearchFilter,
+        filters.OrderingFilter,
+        backend_filters.DjangoFilterBackend,
+    ]
+    ordering_fields = ['id', 'created_at', 'updated_at']
+    filterset_fields = ['is_active']
+    search_fields = ['first_name', 'last_name', 'email']
+
+    def get_queryset(self):
+        return self.queryset.filter(company__owner=self.request.user.profile)
+
+    def perform_create(self, serializer):
+        staff_contacts = serializer.validated_data.pop('staff_contacts', None)
+        work_schedule = serializer.validated_data.pop('work_schedule', None)
+        staff = serializer.save()
+        if staff_contacts:
+            for contact in staff_contacts:
+                ContactInformation.objects.create(staff=staff, **contact)
+        if work_schedule:
+            for schedule in work_schedule:
+                WorkSchedule.objects.create(staff=staff, **schedule)
+
+    def perform_update(self, serializer):
+        staff_contacts = serializer.validated_data.pop('staff_contacts', None)
+        work_schedule = serializer.validated_data.pop('work_schedule', None)
+        staff = serializer.save()
+        if staff_contacts:
+            staff.staff_contacts.all().delete()
+            for contact in staff_contacts:
+                ContactInformation.objects.create(staff=staff, **contact)
+        if work_schedule:
+            staff.work_schedule.all().delete()
+            for schedule in work_schedule:
+                WorkSchedule.objects.create(staff=staff, **schedule)
 
 
 class CompanyViewSet(viewsets.ModelViewSet):

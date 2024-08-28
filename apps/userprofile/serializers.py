@@ -1,14 +1,12 @@
 from rest_framework import serializers
 from .models import UserProfile
 from django.db.models import Avg
-from apps.services.serializers import StaffSlotsSerializer
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
     username = serializers.CharField(source='user.username', read_only=True)
     email = serializers.CharField(source='user.email', read_only=True)
     user_type = serializers.CharField(source='user.user_type', read_only=True)
-    staff_slots = StaffSlotsSerializer(many=True,required=False)
 
     class Meta:
         model = UserProfile

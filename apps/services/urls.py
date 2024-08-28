@@ -7,13 +7,15 @@ from .views import (
     UpdateCompanyServicesAPIView, UpdateCompanyImagesAPIView, UpdateCompanyStaffAPIView,
     ServicesViewSet, PublicServicesListAPIView, PublicServicesDetailAPIView,
     PublicCompanyListAPIView, PublicCompanyDetailAPIView,
-AvailableStaffSlotsAPIView,
+CompanyStaffViewSet,
+AvailableStaffSlotsAPIView
 )
 
 
 router = DefaultRouter()
 router.register('company', CompanyViewSet, basename='company')
 router.register('services', ServicesViewSet, basename='services')
+router.register('company-staff', CompanyStaffViewSet, basename='company-staff')
 
 
 urlpatterns = [

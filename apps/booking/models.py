@@ -25,6 +25,8 @@ class Bookings(AB):
     booking_date = models.DateField()
     start_booking_slot = models.DateTimeField(null=True, blank=True)
     end_booking_slot = models.DateTimeField(null=True, blank=True)
+    phone= models.CharField(max_length=20, null=True, blank=True)
+    booking_description = models.TextField(null=True, blank=True)
     booking_status = models.CharField(max_length=255, choices=BOOKINGSTATUS, default='Pending')
     payment_type = models.CharField(max_length=255, choices=PAYMENT_TYPE, default='on_the_spot')
     is_active = models.BooleanField(default=True)

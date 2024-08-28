@@ -1,22 +1,30 @@
-from .models import Company, CompanyImages, Services, CompanyStaff, BookingFields, StaffSlots
+from .models import Company, CompanyImages, Services, CompanyStaff, BookingFields, ContactInformation, WorkSchedule
 from rest_framework import serializers
 from apps.booking.serializers import  ServiceFeedbackSerializer
 
 
-class StaffSlotsSerializer(serializers.ModelSerializer):
+class ContactInformationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = StaffSlots
+        model = ContactInformation
         fields = '__all__'
         extra_kwargs = {
             'staff': {'required': False}
         }
 
+class WorkScheduleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WorkSchedule
+        fields = '__all__'
+        extra_kwargs = {
+            'staff': {'required': False}
+        }
+
+
 class CompanyStaffSerializer(serializers.ModelSerializer):
 
-    staff_first_name = serializers.CharField(source='staff_member.first_name', read_only=True)
-    staff_last_name = serializers.CharField(source='staff_member.last_name', read_only=True)
-    staff_email = serializers.CharField(source='staff_member.user.email', read_only=True)
-    staff_rating = serializers.SerializerMethodField()
+    staff_contacts = ContactInformationSerializer(many=True, required=False)
+    work_schedule = WorkScheduleSerializer(many=True, required=False)
+    calling_code = serializers.CharField(source='calling_code.calling_code', read_only=True)
 
     class Meta:
         model = CompanyStaff
@@ -42,7 +50,7 @@ class ServicesSerializer(serializers.ModelSerializer):
     service_booking_fields = BookingFieldsSerializer(many=True)
     service_provider_first_name = serializers.CharField(source='service_provider.first_name', read_only=True)
     service_provider_last_name = serializers.CharField(source='service_provider.last_name', read_only=True)
-    service_provider_email = serializers.CharField(source='service_provider.user.email', read_only=True)
+    service_provider_email = serializers.CharField(source='service_provider.email', read_only=True)
     class Meta:
         model = Services
         fields = '__all__'
