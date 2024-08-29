@@ -150,7 +150,12 @@ class ServicesViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         booking_fields = serializer.validated_data.pop('service_booking_fields', None)
+        service_providers = self.request.data.getlist('service_providers', None)
+
         service = serializer.save()
+        if service_providers:
+            for provider in service_providers:
+                service.service_providers.add(provider)
         if booking_fields:
             for field in booking_fields:
                 BookingFields.objects.create(service=service, **field)

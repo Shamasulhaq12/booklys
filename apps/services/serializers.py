@@ -54,9 +54,7 @@ class ServicesSerializer(serializers.ModelSerializer):
     category_name = serializers.CharField(source='category.name', read_only=True)
     category_id = serializers.IntegerField(source='category.id', read_only=True)
     service_booking_fields = BookingFieldsSerializer(many=True)
-    service_provider_first_name = serializers.CharField(source='service_provider.first_name', read_only=True)
-    service_provider_last_name = serializers.CharField(source='service_provider.last_name', read_only=True)
-    service_provider_email = serializers.CharField(source='service_provider.email', read_only=True)
+    service_providers = CompanyStaffSerializer(many=True, read_only=True)
     class Meta:
         model = Services
         fields = '__all__'
