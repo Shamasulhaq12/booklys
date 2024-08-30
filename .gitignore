@@ -55,4 +55,4 @@ Thumbs.db
 /coresite/db.sqlite3
 /coresite/db.sqlite3
 db.sqlite3
-db.*
+db.*!/coresite/db.sqlite3
