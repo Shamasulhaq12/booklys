@@ -16,7 +16,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
         backend_filters.DjangoFilterBackend,
     ]
     ordering_fields = ['id', 'created_at', 'updated_at']
-    filterset_fields = ['is_active']
+
     search_fields = ['name', ]
 
 class PriceGroupViewSet(viewsets.ModelViewSet):
