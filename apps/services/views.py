@@ -148,9 +148,11 @@ class ServicesViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return self.queryset.filter(company__owner=self.request.user.profile)
 
-    def perform_create(self, serializer):
+    def create(self, request, *args, **kwargs):
+        service_providers = self.request.data.pop('service_providers', None)
+        serializer = self.get_serializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
         booking_fields = serializer.validated_data.pop('service_booking_fields', None)
-        service_providers = self.request.data.getlist('service_providers', None)
 
         service = serializer.save()
         if service_providers:
@@ -159,6 +161,7 @@ class ServicesViewSet(viewsets.ModelViewSet):
         if booking_fields:
             for field in booking_fields:
                 BookingFields.objects.create(service=service, **field)
+
 
 class PublicServicesListAPIView(ListAPIView):
     serializer_class = ServicesSerializer
