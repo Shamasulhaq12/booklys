@@ -52,4 +52,7 @@ Thumbs.db
 
 .env
 *.sqllite3
-!/coresite/db.sqlite3
+/coresite/db.sqlite3
+/coresite/db.sqlite3
+db.sqlite3
+db.*
