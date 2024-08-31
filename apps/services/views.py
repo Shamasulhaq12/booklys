@@ -161,6 +161,7 @@ class ServicesViewSet(viewsets.ModelViewSet):
         if booking_fields:
             for field in booking_fields:
                 BookingFields.objects.create(service=service, **field)
+        return Response(serializer.data, status=201)
 
 
 class PublicServicesListAPIView(ListAPIView):
