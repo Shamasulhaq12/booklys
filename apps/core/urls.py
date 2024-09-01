@@ -10,6 +10,7 @@ from apps.core.views import (
     AccountActivationAPIView,
     CustomTokenObtainPairView,
     ResendActivationAPIView,
+ContactUsCreateAPIView,
 )
 from rest_framework_simplejwt.views import (
     TokenRefreshView,
@@ -29,6 +30,7 @@ urlpatterns = [
     path('reset-password/<secret_key>', ResetPasswordAPIView.as_view(), name='reset-password'),
     path('email-exist/', EmailExistAPIView.as_view(), name='email-exist'),
     path('account-status/', AccountStatusAPIView.as_view(), name='account-status'),
+    path('contact-us/', ContactUsCreateAPIView.as_view(), name='contact-us'),
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
 
         # path('google/login/', GoogleLoginView.as_view(), name='google-login'),

@@ -3,8 +3,6 @@ from coresite.mixin import AbstractTimeStampModel
 from django.contrib.postgres.fields import ArrayField
 
 
-
-
 class Company(AbstractTimeStampModel):
     name = models.CharField(max_length=255)
     owner = models.ForeignKey('userprofile.UserProfile', on_delete=models.CASCADE, related_name='company_owner')
@@ -16,7 +14,6 @@ class Company(AbstractTimeStampModel):
     is_active = models.BooleanField(default=True)
     longitude = models.FloatField(null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
-
 
     def __str__(self):
         return self.name
@@ -95,8 +92,6 @@ class ContactInformation(AbstractTimeStampModel):
         verbose_name_plural = 'Contact Information'
 
 
-
-
 class Services(AbstractTimeStampModel):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='company_services')
     service_name = models.CharField(max_length=255)
@@ -122,8 +117,6 @@ class Services(AbstractTimeStampModel):
         verbose_name_plural = 'Services'
 
 
-
-
 class BookingFields(AbstractTimeStampModel):
     service = models.ForeignKey(Services, on_delete=models.CASCADE, related_name='service_booking_fields')
     field_name = models.CharField(max_length=255)
@@ -139,7 +132,6 @@ class BookingFields(AbstractTimeStampModel):
         verbose_name_plural = 'Booking Fields'
 
 
-
 DAY_CHOICES = (
     ('Monday', 'Monday'),
     ('Tuesday', 'Tuesday'),
@@ -149,6 +141,8 @@ DAY_CHOICES = (
     ('Saturday', 'Saturday'),
     ('Sunday', 'Sunday'),
 )
+
+
 class WorkSchedule(AbstractTimeStampModel):
     staff = models.ForeignKey(CompanyStaff, on_delete=models.CASCADE, related_name='staff_schedule')
     day = models.CharField(max_length=255, choices=DAY_CHOICES)

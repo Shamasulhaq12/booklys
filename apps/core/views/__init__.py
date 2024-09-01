@@ -8,3 +8,4 @@ from .accountstatus import AccountStatusAPIView
 from .accountactivation import AccountActivationAPIView
 from .resend_activation import ResendActivationAPIView
 from .login import CustomTokenObtainPairView
+from .contact_us import ContactUsCreateAPIView

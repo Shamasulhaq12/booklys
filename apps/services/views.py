@@ -162,6 +162,22 @@ class ServicesViewSet(viewsets.ModelViewSet):
             for field in booking_fields:
                 BookingFields.objects.create(service=service, **field)
         return Response(serializer.data, status=201)
+    def update(self, request, *args, **kwargs):
+        service_providers = self.request.data.pop('service_providers', None)
+        booking_fields = self.request.data.pop('service_booking_fields', None)
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=self.request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        service = serializer.save()
+        if service_providers:
+            service.service_providers.clear()
+            for provider in service_providers:
+                service.service_providers.add(provider)
+        if booking_fields:
+            service.service_booking_fields.all().delete()
+            for field in booking_fields:
+                BookingFields.objects.create(service=service, **field)
+        return Response(serializer.data, status=200)
 
 
 class PublicServicesListAPIView(ListAPIView):
