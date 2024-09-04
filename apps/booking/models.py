@@ -81,3 +81,22 @@ class ServiceFeedback(AB):
         ]
 
 
+class Journals(AB):
+    name = models.CharField(max_length=255)
+    email = models.EmailField(blank=True, null=True)
+    phone = models.CharField(max_length=20, null=True, blank=True)
+    user = models.ForeignKey('userprofile.UserProfile', on_delete=models.CASCADE, related_name='journal_user', null=True, blank=True)
+    owner = models.ForeignKey('userprofile.UserProfile', on_delete=models.CASCADE, related_name='journal_owner', null=True, blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    description = models.TextField(null=True, blank=True)
+
+
+    class Meta:
+        verbose_name = 'Journal'
+        verbose_name_plural = 'Journals'
+        db_table = 'journals'
+        ordering = ['-id']
+        indexes = [
+            models.Index(fields=['-id']),
+            models.Index(fields=['-created_at']),
+        ]

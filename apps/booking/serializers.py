@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Bookings, ClientFeedback, ServiceFeedback
+from .models import Bookings, ClientFeedback, ServiceFeedback, Journals
 import datetime
 from .helper import is_slot_available
 
@@ -36,3 +36,9 @@ class BookingsSerializer(serializers.ModelSerializer):
         if is_slot_available(attrs['service'], attrs['booking_date'], attrs['start_booking_slot'], attrs['end_booking_slot']):
             raise serializers.ValidationError('Slot is not available')
         return attrs
+
+class JournalsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Journals
+        fields = '__all__'
+        read_only_fields = ('created_at', 'updated_at')

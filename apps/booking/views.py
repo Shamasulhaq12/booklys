@@ -1,9 +1,30 @@
 from rest_framework import viewsets
-from .serializers import BookingsSerializer, ClientFeedbackSerializer, ServiceFeedbackSerializer
+from .serializers import BookingsSerializer, ClientFeedbackSerializer, ServiceFeedbackSerializer, JournalsSerializer
 from rest_framework import filters
 from django_filters import rest_framework as backend_filters
 from .filters import BookingsFilter
 from utils.paginations import OurLimitOffsetPagination
+
+
+
+class JournalsViewSet(viewsets.ModelViewSet):
+    serializer_class = JournalsSerializer
+    queryset = JournalsSerializer.Meta.model.objects.all()
+    filter_backends = [
+        filters.SearchFilter,
+        filters.OrderingFilter,
+        backend_filters.DjangoFilterBackend,
+    ]
+    search_fields = ['name', 'description']
+    ordering_fields = ['id', 'created_at', 'updated_at']
+    filterset_fields = ['name', 'description']
+    pagination_class = OurLimitOffsetPagination
+    def get_queryset(self):
+        queryset = self.queryset.filter(user=self.request.user.profile)
+        return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user.profile)
 
 
 
