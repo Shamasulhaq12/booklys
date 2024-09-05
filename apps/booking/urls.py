@@ -5,7 +5,9 @@ from .views import (
     BookingsViewSet,
     ServiceFeedbackViewSet,
     ClientFeedbackViewSet,
-JournalsViewSet,
+    JournalsViewSet,
+    BookingDetailsForCalenderListing,
+    BookingUsersList
 )
 
 router = DefaultRouter()
@@ -16,5 +18,6 @@ router.register('journals', JournalsViewSet, basename='journals')
 
 urlpatterns = [
     path('', include(router.urls)),
-
+    path('booking-details-for-calender-listing/', BookingDetailsForCalenderListing.as_view(), name='booking-details-for-calender-listing'),
+    path('booking-users-list/', BookingUsersList.as_view(), name='booking-users-list'),
 ]

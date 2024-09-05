@@ -1,11 +1,51 @@
 from rest_framework import viewsets
 from .serializers import BookingsSerializer, ClientFeedbackSerializer, ServiceFeedbackSerializer, JournalsSerializer
 from rest_framework import filters
+from rest_framework.views import APIView
 from django_filters import rest_framework as backend_filters
 from .filters import BookingsFilter
+from rest_framework.response import Response
+from rest_framework.generics import ListAPIView
+from rest_framework import status
 from utils.paginations import OurLimitOffsetPagination
+from apps.userprofile.models import UserProfile
+from datetime import datetime
 
 
+class BookingUsersList(ListAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = BookingsSerializer
+    pagination_class = OurLimitOffsetPagination
+    filter_backends = [
+        filters.SearchFilter,
+        filters.OrderingFilter,
+        backend_filters.DjangoFilterBackend,
+    ]
+    search_fields = ['first_name', 'last_name', 'user__email', ]
+    ordering_fields = ['id', 'created_at', 'updated_at']
+    filterset_fields = ['user','user__email']
+
+    def get_queryset(self):
+        queryset = self.queryset.filter(user__user_type='client')
+        return queryset
+
+
+class BookingDetailsForCalenderListing(APIView):
+    def get(self, request):
+        try:
+            month = request.GET.get('month',None)
+            year = request.GET.get('year',None)
+            booking_list = BookingsSerializer.Meta.model.objects.filter(
+                service__company__owner=request.user.profile)
+            if not month and not year:
+                month = datetime.now().month
+                year = datetime.now().year
+            if month and year:
+                booking_list = BookingsSerializer.Meta.model.objects.filter(service__company__owner=request.user.profile, booking_date__month=month, booking_date__year=year)
+            booking_list = booking_list.values('id', 'booking_date', 'start_booking_slot', 'end_booking_slot', 'service','booking_status')
+            return Response(booking_list, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class JournalsViewSet(viewsets.ModelViewSet):
     serializer_class = JournalsSerializer
