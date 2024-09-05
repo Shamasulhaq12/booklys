@@ -84,6 +84,11 @@ class CompanyViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         owner = self.request.user.profile
         company_staff = serializer.validated_data.pop('company_staff', None)
+        company_images = serializer.validated_data.pop('company_images', None)
+        if company_images:
+            company = serializer.save(owner=owner)
+            for image in company_images:
+                CompanyImages.objects.create(company=company, **image)
         if company_staff:
             company = serializer.save(owner=owner)
             for staff in company_staff:
