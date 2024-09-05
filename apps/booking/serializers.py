@@ -1,8 +1,15 @@
 from rest_framework import serializers
 from .models import Bookings, ClientFeedback, ServiceFeedback, Journals
+from apps.userprofile.models import UserProfile
 import datetime
 from .helper import is_slot_available
 
+
+class BookingUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['id', 'first_name', 'last_name', 'user', 'image',]
+        read_only_fields = ('created_at', 'updated_at')
 
 
 class ClientFeedbackSerializer(serializers.ModelSerializer):

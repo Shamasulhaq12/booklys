@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from .serializers import BookingsSerializer, ClientFeedbackSerializer, ServiceFeedbackSerializer, JournalsSerializer
+from .serializers import BookingsSerializer, ClientFeedbackSerializer, ServiceFeedbackSerializer, JournalsSerializer, BookingUserSerializer
 from rest_framework import filters
 from rest_framework.views import APIView
 from django_filters import rest_framework as backend_filters
@@ -14,7 +14,7 @@ from datetime import datetime
 
 class BookingUsersList(ListAPIView):
     queryset = UserProfile.objects.all()
-    serializer_class = BookingsSerializer
+    serializer_class = BookingUserSerializer
     pagination_class = OurLimitOffsetPagination
     filter_backends = [
         filters.SearchFilter,
