@@ -66,10 +66,13 @@ class CompanyImagesSerializer(serializers.ModelSerializer):
     class Meta:
         model = CompanyImages
         fields = '__all__'
+        extra_kwargs = {
+            'company': {'required': False}
+        }
 
 
 class CompanySerializer(serializers.ModelSerializer):
-    company_images = CompanyImagesSerializer(many=True, read_only=True)
+    company_images = CompanyImagesSerializer(many=True)
     company_services = ServicesSerializer(many=True, read_only=True)
     company_staff = CompanyStaffSerializer(many=True,read_only=True)
     category_name = serializers.CharField(source='category.name', read_only=True)
