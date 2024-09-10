@@ -11,13 +11,19 @@ from .filters import ServicesFilter
 from rest_framework import filters
 from django_filters import rest_framework as backend_filters
 from rest_framework.response import Response
+from django.shortcuts import get_object_or_404
+from rest_framework import status
 
 
 class AvailableStaffSlotsAPIView(APIView):
     def get(self, request, *args, **kwargs):
         staff = self.request.GET.get('staff')
 
-        return Response({'slots': []})
+        if staff:
+            staff = get_object_or_404(CompanyStaff, id=staff)
+            slots = staff.staff_schedule.all().values('day', 'start_time', 'end_time', 'start_break_time', 'end_break_time')
+            return Response({'slots': slots}, status=status.HTTP_200_OK)
+        return Response({'error': 'Staff id is required'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateCompanyStaffImageAPIView(UpdateAPIView):
