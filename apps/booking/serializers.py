@@ -25,9 +25,11 @@ class ServiceFeedbackSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('created_at', 'updated_at')
 
+
 class BookingsSerializer(serializers.ModelSerializer):
     booking_feedback = ClientFeedbackSerializer(many=True, read_only=True)
     available_slots = serializers.SerializerMethodField()
+
     class Meta:
         model = Bookings
         fields = '__all__'
@@ -43,6 +45,7 @@ class BookingsSerializer(serializers.ModelSerializer):
         if is_slot_available(attrs['service'], attrs['booking_date'], attrs['start_booking_slot'], attrs['end_booking_slot']):
             raise serializers.ValidationError('Slot is not available')
         return attrs
+
 
 class JournalsSerializer(serializers.ModelSerializer):
     class Meta:

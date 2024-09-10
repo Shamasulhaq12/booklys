@@ -42,7 +42,7 @@ class BookingDetailsForCalenderListing(APIView):
                 year = datetime.now().year
             if month and year:
                 booking_list = BookingsSerializer.Meta.model.objects.filter(service__company__owner=request.user.profile, booking_date__month=month, booking_date__year=year)
-            booking_list = booking_list.values('id', 'booking_date', 'start_booking_slot', 'end_booking_slot', 'service','booking_status')
+            booking_list = booking_list.values('id', 'booking_date', 'start_booking_slot', 'end_booking_slot', 'service', 'service__service_name', 'booking_status')
             return Response(booking_list, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
@@ -82,8 +82,8 @@ class ClientFeedbackViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
-            if self.request.user.user_type == 'supplier':
-                return self.queryset.filter(service__supplier=self.request.user.profile)
+            if self.request.user.user_type == 'owner':
+                return self.queryset.filter(booking__service__company__owner=self.request.user.profile)
             return self.queryset.filter(user=self.request.user.profile)
         return self.queryset.none()
 
@@ -107,8 +107,8 @@ class ServiceFeedbackViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
-            if self.request.user.user_type == 'supplier':
-                return self.queryset.filter(service__supplier=self.request.user.profile)
+            if self.request.user.user_type == 'owner':
+                return self.queryset.filter(service__company__owner=self.request.user.profile)
             return self.queryset.filter(user=self.request.user.profile)
         return self.queryset.none()
 
@@ -134,8 +134,8 @@ class BookingsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
-            if self.request.user.user_type == 'supplier':
-                return self.queryset.filter(service__supplier=self.request.user.profile)
+            if self.request.user.user_type == 'owner':
+                return self.queryset.filter(service__company__owner=self.request.user.profile)
             return self.queryset.filter(user=self.request.user.profile)
         return self.queryset.none()
 

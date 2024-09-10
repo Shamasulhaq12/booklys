@@ -78,7 +78,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
     ]
     ordering_fields = ['id', 'created_at', 'updated_at']
     filterset_fields = [ 'is_active']
-    search_fields = ['name', 'company_description']
+    search_fields = ['name', 'company_description', 'company_services__service_name']
 
 
     def perform_create(self, serializer):
@@ -120,7 +120,7 @@ class PublicCompanyListAPIView(ListAPIView):
     ]
     ordering_fields = ['id', 'created_at', 'updated_at']
     filterset_fields = [ 'company_services__category__id','is_active']
-    search_fields = ['name', 'company_description']
+    search_fields = ['name', 'company_description', 'company_services__service_name']
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
