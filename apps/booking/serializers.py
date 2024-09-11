@@ -29,11 +29,20 @@ class ServiceFeedbackSerializer(serializers.ModelSerializer):
 class BookingsSerializer(serializers.ModelSerializer):
     booking_feedback = ClientFeedbackSerializer(many=True, read_only=True)
     available_slots = serializers.SerializerMethodField()
+    company_name = serializers.CharField(source='service.company.name', read_only=True)
+    service_name = serializers.CharField(source='service.service_name', read_only=True)
+    company_image = serializers.SerializerMethodField()
+
 
     class Meta:
         model = Bookings
         fields = '__all__'
         read_only_fields = ('created_at', 'updated_at')
+    def get_company_image(self, obj):
+        try:
+            return obj.service.company.company_images.first().image.url
+        except:
+            return None
 
 
 
