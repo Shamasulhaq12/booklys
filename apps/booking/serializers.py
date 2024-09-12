@@ -28,9 +28,9 @@ class ServiceFeedbackSerializer(serializers.ModelSerializer):
 
 class BookingsSerializer(serializers.ModelSerializer):
     booking_feedback = ClientFeedbackSerializer(many=True, read_only=True)
-    available_slots = serializers.SerializerMethodField()
     company_name = serializers.CharField(source='service.company.name', read_only=True)
     service_name = serializers.CharField(source='service.service_name', read_only=True)
+    service_timing = serializers.CharField(source='service.service_timing', read_only=True)
     company_image = serializers.SerializerMethodField()
 
 

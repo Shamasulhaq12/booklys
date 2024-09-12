@@ -10,6 +10,25 @@ from rest_framework import status
 from utils.paginations import OurLimitOffsetPagination
 from apps.userprofile.models import UserProfile
 from datetime import datetime
+from django.db.models import Sum
+
+class BookingDashboard(APIView):
+    def get(self, request):
+        try:
+            booking_list = BookingsSerializer.Meta.model.objects.filter(
+                service__company__owner=request.user.profile)
+            total_booking = booking_list.count()
+            total_earning = booking_list.aggregate(total_earning=Sum('total_price'))['total_earning']
+            total_feedback = booking_list.filter(booking_feedback__isnull=False).count()
+            total_client = booking_list.values('user').distinct().count()
+            return Response({
+                'total_booking': total_booking,
+                'total_earning': total_earning,
+                'total_feedback': total_feedback,
+                'total_client': total_client
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class BookingUsersList(ListAPIView):
@@ -140,6 +159,7 @@ class BookingsViewSet(viewsets.ModelViewSet):
         return self.queryset.none()
 
     def perform_create(self, serializer):
+        serializer.save()
         instance = serializer.instance
         additional_services = instance.service.additional_services.all()
         total_price= instance.service.price
@@ -147,8 +167,8 @@ class BookingsViewSet(viewsets.ModelViewSet):
             for service in additional_services:
                 if service.is_free:
                     total_price += service.price
-        serializer.save(total_price=total_price)
-
+        instance.total_price = total_price
+        instance.save()
     def perform_update(self, serializer):
         instance = serializer.instance
         additional_services = instance.service.additional_services.all()

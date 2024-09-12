@@ -7,7 +7,8 @@ from .views import (
     ClientFeedbackViewSet,
     JournalsViewSet,
     BookingDetailsForCalenderListing,
-    BookingUsersList
+    BookingUsersList,
+BookingDashboard
 )
 
 router = DefaultRouter()
@@ -20,4 +21,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('booking-details-for-calender-listing/', BookingDetailsForCalenderListing.as_view(), name='booking-details-for-calender-listing'),
     path('booking-users-list/', BookingUsersList.as_view(), name='booking-users-list'),
+    path('booking-dashboard/', BookingDashboard.as_view(), name='booking-dashboard'),
 ]
