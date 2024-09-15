@@ -1,4 +1,4 @@
-from .models import Company, CompanyImages, Services, CompanyStaff, BookingFields, ContactInformation, WorkSchedule
+from .models import Company, CompanyImages, Services, CompanyStaff, BookingFields, ContactInformation, WorkSchedule, Slots
 from rest_framework import serializers
 from apps.booking.serializers import  ServiceFeedbackSerializer
 
@@ -11,7 +11,18 @@ class ContactInformationSerializer(serializers.ModelSerializer):
             'staff': {'required': False}
         }
 
+
+class SlotsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Slots
+        fields = '__all__'
+        extra_kwargs = {
+            'work_schedule': {'required': False}
+        }
+
+
 class WorkScheduleSerializer(serializers.ModelSerializer):
+    staff_slots = SlotsSerializer(many=True, required=False)
     class Meta:
         model = WorkSchedule
         fields = '__all__'

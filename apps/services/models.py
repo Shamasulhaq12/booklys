@@ -152,9 +152,24 @@ class WorkSchedule(AbstractTimeStampModel):
     end_break_time = models.TimeField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
+
     def __str__(self):
         return self.staff.first_name
 
     class Meta:
         verbose_name = 'Work Schedule'
         verbose_name_plural = 'Work Schedules'
+
+
+class Slots(AbstractTimeStampModel):
+    work_schedule = models.ForeignKey(WorkSchedule, on_delete=models.CASCADE, related_name='staff_slots')
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.staff.first_name
+
+    class Meta:
+        verbose_name = 'Slot'
+        verbose_name_plural = 'Slots'
