@@ -73,11 +73,17 @@ class CompanyStaffViewSet(viewsets.ModelViewSet):
         serializer.save()
         staff= serializer.instance
         if staff_contacts:
-            staff.staff_contacts.all().delete()
+            if staff:
+                staff=staff.staff_contacts.all()
+                if staff.exists():
+                    staff.delete()
             for contact in staff_contacts:
                 ContactInformation.objects.create(staff=staff, **contact)
         if work_schedule:
-            staff.work_schedule.all().delete()
+            if staff:
+                staff.work_schedule.all()
+                if staff.exists():
+                    staff.delete()
             for schedule in work_schedule:
                 work_schedule=WorkSchedule.objects.create(staff=staff, **schedule)
                 slots = create_time_slots(work_schedule.start_time, work_schedule.end_time,
