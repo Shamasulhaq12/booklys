@@ -70,7 +70,8 @@ class CompanyStaffViewSet(viewsets.ModelViewSet):
     def perform_update(self, serializer):
         staff_contacts = serializer.validated_data.pop('staff_contacts', None)
         work_schedule = serializer.validated_data.pop('work_schedule', None)
-        staff = serializer.save()
+        serializer.save()
+        staff= serializer.instance
         if staff_contacts:
             staff.staff_contacts.all().delete()
             for contact in staff_contacts:
