@@ -34,7 +34,7 @@ class WorkScheduleSerializer(serializers.ModelSerializer):
 class CompanyStaffSerializer(serializers.ModelSerializer):
 
     staff_contacts = ContactInformationSerializer(many=True, required=False)
-    work_schedule = WorkScheduleSerializer(many=True, required=False)
+    staff_schedule = WorkScheduleSerializer(many=True, required=False)
     calling_code = serializers.CharField(source='calling_code.calling_code', read_only=True)
     company_name = serializers.CharField(source='company.name', read_only=True)
     company_id = serializers.IntegerField(source='company.id', read_only=True)
