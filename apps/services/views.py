@@ -52,7 +52,7 @@ class CompanyStaffViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         staff_contacts = serializer.validated_data.pop('staff_contacts', None)
-        work_schedule = serializer.validated_data.pop('work_schedule', None)
+        work_schedule = serializer.validated_data.pop('staff_schedule', None)
         staff = serializer.save()
 
         if staff_contacts:
@@ -69,7 +69,7 @@ class CompanyStaffViewSet(viewsets.ModelViewSet):
 
     def perform_update(self, serializer):
         staff_contacts = serializer.validated_data.pop('staff_contacts', None)
-        work_schedule = serializer.validated_data.pop('work_schedule', None)
+        work_schedule = serializer.validated_data.pop('staff_schedule', None)
         serializer.save()
         staff= serializer.instance
         if staff_contacts:

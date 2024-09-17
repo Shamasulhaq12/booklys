@@ -22,7 +22,7 @@ class SlotsSerializer(serializers.ModelSerializer):
 
 
 class WorkScheduleSerializer(serializers.ModelSerializer):
-    staff_slots = SlotsSerializer(many=True, required=False)
+    staff_slots = SlotsSerializer(many=True, read_only=True)
     class Meta:
         model = WorkSchedule
         fields = '__all__'
