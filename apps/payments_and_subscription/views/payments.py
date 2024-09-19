@@ -1,3 +1,4 @@
+from decimal import Decimal as decimal
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -71,7 +72,8 @@ class CreatePayPalPaymentAPIView(APIView):
                     paid_currency = response.result.purchase_units[0].amount.currency_code
                     transaction_time = response.result.create_time
                     payment_resource_id = response.result.purchase_units[0].payments.captures[0].id
-                    if paid_amount != amount:
+                    print(paid_amount, amount)
+                    if decimal(paid_amount) != decimal(amount):
                         return Response({
                             'message': 'Amount does not match with subscription price'
                         }, status=status.HTTP_400_BAD_REQUEST)
@@ -79,8 +81,8 @@ class CreatePayPalPaymentAPIView(APIView):
                         user=request.user.profile,
                         payment_id=paypal_payment_id,
                         subscription_id=subscription_id,
-                        paid_amount=paid_amount,
-                        paid_currency=paid_currency,
+                        payment_amount=paid_amount,
+                        payment_currency=paid_currency,
                         payment_time=transaction_time,
                         payment_resource_id=payment_resource_id
                     )
