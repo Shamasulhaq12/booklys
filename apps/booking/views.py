@@ -75,7 +75,20 @@ class DashboardUserOccupancy(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=500)
 
+class BookingPIChart(APIView):
+    def get(self, request):
+        try:
+            # Get bookings for the current user's company
+            booking_list = BookingsSerializer.Meta.model.objects.filter(
+                service__company__owner=request.user.profile
+            ).values('booking_status').annotate(
+                count=Count('id')
+            )
 
+            booking_status_dict = {status['booking_status']: _status['count'] for _status in booking_list}
+            return Response(booking_status_dict)
+        except Exception as e:
+            return Response({'error': str(e)}, status=500)
 
 
 class BookingUsersList(ListAPIView):
