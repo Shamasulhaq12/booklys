@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from .serializers import BookingsSerializer, ClientFeedbackSerializer, ServiceFeedbackSerializer, JournalsSerializer, BookingUserSerializer
 from rest_framework import filters
+from apps.services.models import  CompanyStaff
 from rest_framework.views import APIView
 from django_filters import rest_framework as backend_filters
 from .filters import BookingsFilter
@@ -11,24 +12,70 @@ from utils.paginations import OurLimitOffsetPagination
 from apps.userprofile.models import UserProfile
 from datetime import datetime
 from django.db.models import Sum
+from django.db.models.functions import ExtractMonth
+from django.db.models import Count
+import calendar
 
 class BookingDashboard(APIView):
     def get(self, request):
         try:
+            # Get bookings for the current user's company
             booking_list = BookingsSerializer.Meta.model.objects.filter(
-                service__company__owner=request.user.profile)
-            total_booking = booking_list.count()
-            total_earning = booking_list.aggregate(total_earning=Sum('total_price'))['total_earning']
-            total_feedback = booking_list.filter(booking_feedback__isnull=False).count()
-            total_client = booking_list.values('user').distinct().count()
-            return Response({
-                'total_booking': total_booking,
-                'total_earning': total_earning,
-                'total_feedback': total_feedback,
-                'total_client': total_client
-            }, status=status.HTTP_200_OK)
+                service__company__owner=request.user.profile
+            )
+
+            # Aggregate bookings by month using booking_date
+            monthly_bookings = booking_list.annotate(
+                month=ExtractMonth('booking_date')  # Using booking_date for aggregation
+            ).values('month').annotate(
+                count=Count('id')
+            ).order_by('month')
+
+            # Initialize a dictionary to hold the counts for each month
+            bookings_per_month = {i: 0 for i in range(1, 13)}
+
+            # Populate the dictionary with the aggregated data
+            for booking in monthly_bookings:
+                bookings_per_month[booking['month']] = booking['count']
+
+            # Create a list of month names with their corresponding counts
+            month_names = {i: calendar.month_name[i] for i in range(1, 13)}
+            result = {month_names[i]: bookings_per_month[i] for i in range(1, 13)}
+
+            return Response(result)
         except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': str(e)}, status=500)
+
+class DashboardUserOccupancy(APIView):
+    def get(self, request):
+        try:
+            # Get bookings for the current user's company
+            company_staff = CompanyStaff.objects.filter(company__owner=request.user.profile)
+
+
+            # Aggregate bookings by month using booking_date
+            monthly_occupancy = company_staff.annotate(
+                month=ExtractMonth('work_from')  # Using booking_date for aggregation
+            ).values('month').annotate(
+                count=Count('id')
+            ).order_by('month')
+
+            # Initialize a dictionary to hold the counts for each month
+            occupancy_per_month = {i: 0 for i in range(1, 13)}
+
+            # Populate the dictionary with the aggregated data
+            for booking in monthly_occupancy:
+                occupancy_per_month[booking['month']] = booking['count']
+
+            # Create a list of month names with their corresponding counts
+            month_names = {i: calendar.month_name[i] for i in range(1, 13)}
+            result = {month_names[i]: occupancy_per_month[i] for i in range(1, 13)}
+
+            return Response(result)
+        except Exception as e:
+            return Response({'error': str(e)}, status=500)
+
+
 
 
 class BookingUsersList(ListAPIView):
