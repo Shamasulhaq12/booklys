@@ -8,7 +8,10 @@ from .views import (
     JournalsViewSet,
     BookingDetailsForCalenderListing,
     BookingUsersList,
-BookingDashboard
+BookingDashboard,
+BookingPIChart,
+DashboardUserOccupancy,
+
 )
 
 router = DefaultRouter()
@@ -22,4 +25,7 @@ urlpatterns = [
     path('booking-details-for-calender-listing/', BookingDetailsForCalenderListing.as_view(), name='booking-details-for-calender-listing'),
     path('booking-users-list/', BookingUsersList.as_view(), name='booking-users-list'),
     path('booking-dashboard/', BookingDashboard.as_view(), name='booking-dashboard'),
+    path('booking-pi-chart/', BookingPIChart.as_view(), name='booking-pi-chart'),
+    path('dashboard-user-occupancy/', DashboardUserOccupancy.as_view(), name='dashboard-user-occupancy'),
+
 ]

@@ -32,6 +32,8 @@ class BookingsSerializer(serializers.ModelSerializer):
     service_name = serializers.CharField(source='service.service_name', read_only=True)
     service_timing = serializers.CharField(source='service.service_timing', read_only=True)
     company_image = serializers.SerializerMethodField()
+    user_first_name = serializers.CharField(source='user.first_name', read_only=True)
+    user_last_name = serializers.CharField(source='user.last_name', read_only=True)
 
 
     class Meta:
@@ -47,6 +49,7 @@ class BookingsSerializer(serializers.ModelSerializer):
 
 
     def validate(self, attrs):
+
         if attrs['booking_date'] < datetime.date.today():
             raise serializers.ValidationError('Booking date cannot be in the past')
         if attrs['start_booking_slot'] >= attrs['end_booking_slot']:

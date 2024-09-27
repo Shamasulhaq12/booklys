@@ -12,6 +12,7 @@ from utils.paginations import OurLimitOffsetPagination
 from apps.userprofile.models import UserProfile
 from datetime import datetime
 from django.db.models import Sum
+
 from django.db.models.functions import ExtractMonth
 from django.db.models import Count
 import calendar
@@ -121,7 +122,7 @@ class BookingDetailsForCalenderListing(APIView):
                 year = datetime.now().year
             if month and year:
                 booking_list = BookingsSerializer.Meta.model.objects.filter(service__company__owner=request.user.profile, booking_date__month=month, booking_date__year=year)
-            booking_list = booking_list.values('id', 'booking_date', 'start_booking_slot', 'end_booking_slot', 'service', 'service__service_name', 'booking_status')
+            booking_list = booking_list.values('id', 'booking_date', 'start_booking_slot', 'end_booking_slot', 'service', 'service__service_name', 'booking_status','user__first_name','user__last_name')
             return Response(booking_list, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)

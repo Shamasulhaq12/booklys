@@ -84,6 +84,7 @@ class ContactInformation(AbstractTimeStampModel):
     address = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
+
     def __str__(self):
         return self.staff.first_name
 
