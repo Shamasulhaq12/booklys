@@ -11,6 +11,7 @@ from .views import (
 BookingDashboard,
 BookingPIChart,
 DashboardUserOccupancy,
+CustomerListAPIView
 
 )
 
@@ -22,6 +23,7 @@ router.register('journals', JournalsViewSet, basename='journals')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('customer-list/', CustomerListAPIView.as_view(), name='customer-list'),
     path('booking-details-for-calender-listing/', BookingDetailsForCalenderListing.as_view(), name='booking-details-for-calender-listing'),
     path('booking-users-list/', BookingUsersList.as_view(), name='booking-users-list'),
     path('booking-dashboard/', BookingDashboard.as_view(), name='booking-dashboard'),

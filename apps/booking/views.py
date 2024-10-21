@@ -1,5 +1,5 @@
 from rest_framework import viewsets
-from .serializers import BookingsSerializer, ClientFeedbackSerializer, ServiceFeedbackSerializer, JournalsSerializer, BookingUserSerializer
+from .serializers import BookingsSerializer,CustomerSerializer, ClientFeedbackSerializer, ServiceFeedbackSerializer, JournalsSerializer, BookingUserSerializer
 from rest_framework import filters
 from apps.services.models import  CompanyStaff
 from rest_framework.views import APIView
@@ -16,6 +16,28 @@ from django.db.models import Sum
 from django.db.models.functions import ExtractMonth
 from django.db.models import Count
 import calendar
+from apps.services.models import Services
+from django.shortcuts import get_object_or_404
+
+
+class CustomerListAPIView(ListAPIView):
+    queryset = UserProfile.objects.all()
+    serializer_class = CustomerSerializer
+    pagination_class = OurLimitOffsetPagination
+    filter_backends = [
+        filters.SearchFilter,
+        filters.OrderingFilter,
+        backend_filters.DjangoFilterBackend,
+    ]
+    search_fields = ['first_name', 'last_name', 'user__email', ]
+    ordering_fields = ['id', 'created_at', 'updated_at']
+    filterset_fields = ['user','user__email']
+
+    def get_queryset(self):
+        booking_user_list = BookingsSerializer.Meta.model.objects.filter(service__company__owner=self.request.user.profile).values_list('user', flat=True)
+        queryset = self.queryset.filter(id__in=booking_user_list)
+        return queryset
+
 
 class BookingDashboard(APIView):
     def get(self, request):
@@ -137,7 +159,7 @@ class JournalsViewSet(viewsets.ModelViewSet):
     ]
     search_fields = ['name', 'description']
     ordering_fields = ['id', 'created_at', 'updated_at']
-    filterset_fields = ['name', 'description']
+    filterset_fields = ['name', 'description','owner']
     pagination_class = OurLimitOffsetPagination
     def get_queryset(self):
         queryset = self.queryset.filter(user=self.request.user.profile)
@@ -192,8 +214,18 @@ class ServiceFeedbackViewSet(viewsets.ModelViewSet):
             return self.queryset.filter(user=self.request.user.profile)
         return self.queryset.none()
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user.profile)
+
+    def create(self, request, *args, **kwargs):
+        service= request.data.pop('service',None)
+        if service:
+            service = get_object_or_404(Services, pk=service)
+            service= service.company
+
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(service=service)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
     def perform_update(self, serializer):
         serializer.save(user=self.request.user.profile)
@@ -239,6 +271,18 @@ class BookingsViewSet(viewsets.ModelViewSet):
                 if service.is_free:
                     total_price += service.price
         serializer.save(total_price=total_price)
+        booking_status = serializer.validated_data.get('booking_status',None)
+        if booking_status:
+            if booking_status=="Completed":
+                JournalsSerializer.Meta.model.objects.create(
+                    user=instance.service.company.owner,
+                    name=instance.user.first_name+" "+instance.user.last_name,
+                    email=instance.user.user.email,
+                    phone=instance.phone,
+                    owner=instance.user,
+                    description=f"Booking for {instance.service.service_name} has been completed. Total Price: {instance.total_price}.",
+                    price=instance.total_price,
+                )
 
 
 

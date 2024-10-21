@@ -7,7 +7,7 @@ from rest_framework import status
 
 class SubscriptionViewSet(viewsets.ModelViewSet):
     serializer_class = SubscriptionSerializers
-    queryset = SubscriptionSerializers.Meta.model.objects.all()
+    queryset = SubscriptionSerializers.Meta.model.objects.filter(is_active=True)
 
     def get_permissions(self):
         if self.action == 'create':
