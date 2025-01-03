@@ -1,7 +1,7 @@
 from rest_framework import viewsets
-from .serializers import BookingsSerializer,CustomerSerializer, ClientFeedbackSerializer, ServiceFeedbackSerializer, JournalsSerializer, BookingUserSerializer
+from .serializers import BookingsSerializer, ClientFeedbackSerializer, ServiceFeedbackSerializer, JournalsSerializer, BookingUserSerializer,CustomerSerializer
 from rest_framework import filters
-from apps.services.models import  CompanyStaff
+from apps.services.models import CompanyStaff
 from rest_framework.views import APIView
 from django_filters import rest_framework as backend_filters
 from .filters import BookingsFilter
@@ -12,10 +12,10 @@ from utils.paginations import OurLimitOffsetPagination
 from apps.userprofile.models import UserProfile
 from datetime import datetime
 from django.db.models import Sum
-
 from django.db.models.functions import ExtractMonth
 from django.db.models import Count
 import calendar
+
 from apps.services.models import Services
 from django.shortcuts import get_object_or_404
 
@@ -98,6 +98,7 @@ class DashboardUserOccupancy(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=500)
 
+
 class BookingPIChart(APIView):
     def get(self, request):
         try:
@@ -108,7 +109,9 @@ class BookingPIChart(APIView):
                 count=Count('id')
             )
 
-            booking_status_dict = {status['booking_status']: _status['count'] for _status in booking_list}
+            # Create a dictionary of booking statuses and their counts
+            booking_status_dict = {status['booking_status']: status['count'] for status in booking_list}
+            
             return Response(booking_status_dict)
         except Exception as e:
             return Response({'error': str(e)}, status=500)
@@ -143,7 +146,7 @@ class BookingDetailsForCalenderListing(APIView):
                 month = datetime.now().month
                 year = datetime.now().year
             if month and year:
-                booking_list = BookingsSerializer.Meta.model.objects.filter(service__company__owner=request.user.profile, booking_date__month=month, booking_date__year=year)
+                booking_list = BookingsSerializer.Meta.model.objects.filter(service__company__owner=request.user.profile,  booking_date__year=year)
             booking_list = booking_list.values('id', 'booking_date', 'start_booking_slot', 'end_booking_slot', 'service', 'service__service_name', 'booking_status','user__first_name','user__last_name')
             return Response(booking_list, status=status.HTTP_200_OK)
         except Exception as e:
@@ -214,7 +217,6 @@ class ServiceFeedbackViewSet(viewsets.ModelViewSet):
             return self.queryset.filter(user=self.request.user.profile)
         return self.queryset.none()
 
-
     def create(self, request, *args, **kwargs):
         service= request.data.pop('service',None)
         if service:
@@ -283,6 +285,7 @@ class BookingsViewSet(viewsets.ModelViewSet):
                     description=f"Booking for {instance.service.service_name} has been completed. Total Price: {instance.total_price}.",
                     price=instance.total_price,
                 )
+
 
 
 

@@ -1,4 +1,3 @@
-from decimal import Decimal as decimal
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -61,7 +60,7 @@ class CreatePayPalPaymentAPIView(APIView):
                     }, status=status.HTTP_400_BAD_REQUEST)
                 if paypal_payment_id and subscription_id and amount:
                     subscription = get_object_or_404(Subscription, id=subscription_id)
-                    if subscription.subscription_price != amount:
+                    if float(subscription.subscription_price) != float(amount):
                         return Response({
                             'message': 'Amount does not match with subscription price'
                         }, status=status.HTTP_400_BAD_REQUEST)
@@ -72,21 +71,20 @@ class CreatePayPalPaymentAPIView(APIView):
                     paid_currency = response.result.purchase_units[0].amount.currency_code
                     transaction_time = response.result.create_time
                     payment_resource_id = response.result.purchase_units[0].payments.captures[0].id
-                    print(paid_amount, amount)
-                    if decimal(paid_amount) != decimal(amount):
+                    if float(paid_amount) != float(amount):
                         return Response({
                             'message': 'Amount does not match with subscription price'
                         }, status=status.HTTP_400_BAD_REQUEST)
                     payment = PaymentDetailsSerializers.Meta.model.objects.create(
                         user=request.user.profile,
                         payment_id=paypal_payment_id,
-                        subscription_id=subscription_id,
+                        subscription=subscription,
                         payment_amount=paid_amount,
                         payment_currency=paid_currency,
                         payment_time=transaction_time,
                         payment_resource_id=payment_resource_id
                     )
-                    if response.result.status == 'SUCCESS':
+                    if response.result.status == 'COMPLETED':
                         user = request.user.profile
                         user.subscription = subscription
                         user.profile_status='active'
@@ -107,7 +105,7 @@ class CreatePayPalPaymentAPIView(APIView):
                     }, status=status.HTTP_400_BAD_REQUEST)
                 if paypal_payment_id and booking and amount:
                     booking = get_object_or_404(Bookings, id=booking)
-                    if booking.total_price != amount:
+                    if float(booking.total_price) != float(amount):
                         return Response({
                             'message': 'Amount does not match with booking price'
                         }, status=status.HTTP_400_BAD_REQUEST)
@@ -118,7 +116,7 @@ class CreatePayPalPaymentAPIView(APIView):
                     paid_currency = response.result.purchase_units[0].amount.currency_code
                     transaction_time = response.result.create_time
                     payment_resource_id = response.result.purchase_units[0].payments.captures[0].id
-                    if paid_amount != amount:
+                    if float(paid_amount) != float(amount):
                         return Response({
                             'message': 'Amount does not match with booking price'
                         }, status=status.HTTP_400_BAD_REQUEST)
@@ -126,17 +124,23 @@ class CreatePayPalPaymentAPIView(APIView):
                         user=request.user.profile,
                         payment_id=paypal_payment_id,
                         booking_id=booking.id,
-                        paid_amount=paid_amount,
-                        paid_currency=paid_currency,
+                        payment_amount=paid_amount,
+                        payment_currency=paid_currency,
                         payment_time=transaction_time,
                         payment_resource_id=payment_resource_id
                     )
-                    if response.result.status == 'SUCCESS':
-                        booking.payment_status = 'Confirmed'
+                    if response.result.status == 'COMPLETED':
+                        booking.payment_status = True
+                        booking.booking_status="Confirmed"
                         booking.save()
                         return Response({
                             'message': 'Payment created successfully',
                         }, status=status.HTTP_201_CREATED)
+                return Response(
+                    {
+                        "message":response.result.status
+                    }
+                    )
             else:
                 return Response({
                     'message': 'Invalid payment type'

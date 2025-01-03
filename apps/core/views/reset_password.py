@@ -37,4 +37,4 @@ class ResetPasswordAPIView(APIView):
             return Response({"message": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             logger.error(str(e))
-            return Response({"message": "Something went wrong."}, status.HTTP_406_NOT_ACCEPTABLE)
+            return Response({"message": str(e)}, status.HTTP_406_NOT_ACCEPTABLE)

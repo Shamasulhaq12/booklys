@@ -1,6 +1,5 @@
 from django.db import models
 from coresite.mixin import AbstractTimeStampModel
-from django.contrib.postgres.fields import ArrayField
 
 
 class Company(AbstractTimeStampModel):
@@ -83,7 +82,6 @@ class ContactInformation(AbstractTimeStampModel):
     email = models.EmailField(null=True, blank=True)
     address = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
-
 
     def __str__(self):
         return self.staff.first_name
@@ -168,8 +166,6 @@ class Slots(AbstractTimeStampModel):
     end_time = models.TimeField()
     is_active = models.BooleanField(default=True)
 
-    def __str__(self):
-        return self.staff.first_name
 
     class Meta:
         verbose_name = 'Slot'

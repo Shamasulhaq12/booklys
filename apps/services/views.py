@@ -53,14 +53,14 @@ class CompanyStaffViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         staff_contacts = serializer.validated_data.pop('staff_contacts', None)
         work_schedule = serializer.validated_data.pop('staff_schedule', None)
-        staff = serializer.save()
+        staff_instance = serializer.save()
 
         if staff_contacts:
             for contact in staff_contacts:
-                ContactInformation.objects.create(staff=staff, **contact)
+                ContactInformation.objects.create(staff=staff_instance, **contact)
         if work_schedule:
             for schedule in work_schedule:
-                work_schedule=WorkSchedule.objects.create(staff=staff, **schedule)
+                work_schedule=WorkSchedule.objects.create(staff=staff_instance, **schedule)
 
                 slots = create_time_slots(work_schedule.start_time, work_schedule.end_time,
                                           work_schedule.start_break_time, work_schedule.end_break_time)
@@ -71,21 +71,21 @@ class CompanyStaffViewSet(viewsets.ModelViewSet):
         staff_contacts = serializer.validated_data.pop('staff_contacts', None)
         work_schedule = serializer.validated_data.pop('staff_schedule', None)
         serializer.save()
-        staff= serializer.instance
+        staff_instance= serializer.instance
         if staff_contacts:
-            if staff:
-                staff=staff.staff_contacts.all()
+            if staff_instance:
+                staff=staff_instance.staff_contacts.all()
                 if staff.exists():
                     staff.delete()
             for contact in staff_contacts:
-                ContactInformation.objects.create(staff=staff, **contact)
+                ContactInformation.objects.create(staff=staff_instance, **contact)
         if work_schedule:
-            if staff:
-                staff.work_schedule.all()
+            if staff_instance:
+                staff=staff_instance.staff_schedule.all()
                 if staff.exists():
                     staff.delete()
             for schedule in work_schedule:
-                work_schedule=WorkSchedule.objects.create(staff=staff, **schedule)
+                work_schedule=WorkSchedule.objects.create(staff=staff_instance, **schedule)
                 slots = create_time_slots(work_schedule.start_time, work_schedule.end_time,
                                           work_schedule.start_break_time, work_schedule.end_break_time)
                 for slot in slots:

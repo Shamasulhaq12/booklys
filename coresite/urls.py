@@ -31,6 +31,7 @@ urlpatterns = [
     path('api/booking/', include('apps.booking.urls')),
     path('api/services/', include('apps.services.urls')),
     path('api/api-auth/', include('rest_framework.urls')),
+    path("ckeditor5/", include('django_ckeditor_5.urls')),
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),

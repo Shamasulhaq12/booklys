@@ -7,6 +7,7 @@ class Categories(AbstractTimeStampModel):
     name = models.CharField(max_length=100, unique=True, error_messages={
                             'unique': "This Category has already been registered."})
     category_slug = models.SlugField(max_length=100, unique=True)
+    description = models.CharField(max_length=256)
     image = models.FileField(upload_to='category', null=True, blank=True)
 
     def __str__(self):

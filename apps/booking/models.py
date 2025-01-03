@@ -1,6 +1,8 @@
 from django.db import models
 from coresite.mixin import AbstractTimeStampModel as AB
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django_ckeditor_5.fields import CKEditor5Field
+
 
 
 BOOKINGSTATUS=(
@@ -23,8 +25,8 @@ class Bookings(AB):
     email = models.EmailField(blank=True, null=True)
     user = models.ForeignKey('userprofile.UserProfile', on_delete=models.CASCADE, related_name='client_profile', null=True, blank=True)
     booking_date = models.DateField()
-    start_booking_slot = models.DateTimeField(null=True, blank=True)
-    end_booking_slot = models.DateTimeField(null=True, blank=True)
+    start_booking_slot = models.TimeField(null=True, blank=True)
+    end_booking_slot = models.TimeField(null=True, blank=True)
     phone= models.CharField(max_length=20, null=True, blank=True)
     booking_description = models.TextField(null=True, blank=True)
     booking_status = models.CharField(max_length=255, choices=BOOKINGSTATUS, default='Pending')
@@ -82,13 +84,18 @@ class ServiceFeedback(AB):
 
 
 class Journals(AB):
-    name = models.CharField(max_length=255)
-    email = models.EmailField(blank=True, null=True)
+    date = models.DateField()
+    booking = models.ForeignKey(Bookings, on_delete=models.CASCADE, related_name='booking_journal', null=True, blank=True)
+    diagnosis = models.TextField(null=True, blank=True)
+    kvy_code = models.CharField(max_length=255, null=True, blank=True)
+    contact_name = models.CharField(max_length=255, null=True, blank=True)
+    assessment = models.TextField(null=True, blank=True)
+    action = models.TextField(null=True, blank=True)
+    description = CKEditor5Field(null=True, blank=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
     user = models.ForeignKey('userprofile.UserProfile', on_delete=models.CASCADE, related_name='journal_user', null=True, blank=True)
     owner = models.ForeignKey('userprofile.UserProfile', on_delete=models.CASCADE, related_name='journal_owner', null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
-    description = models.TextField(null=True, blank=True)
 
 
     class Meta:

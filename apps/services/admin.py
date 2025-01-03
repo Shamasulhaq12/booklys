@@ -29,6 +29,8 @@ class WorkScheduleAdmin(admin.ModelAdmin):
     list_display = [ 'day', 'start_time', 'end_time']
     list_filter = ['day']
     search_fields = [ 'day']
+    
+    
 
 admin.site.register(CompanyStaff)
 admin.site.register(Services)

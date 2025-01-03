@@ -4,11 +4,15 @@ from rest_framework import viewsets
 from rest_framework import filters
 from django_filters import rest_framework as backend_filters
 from rest_framework.permissions import AllowAny
+from utils.paginations.pagination import OurLimitOffsetPagination
+
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):
     serializer_class = CategoriesSerializer
     queryset = CategoriesSerializer.Meta.model.objects.all()
+    pagination_class = OurLimitOffsetPagination
+
     permission_classes = [AllowAny]
     filter_backends = [
         filters.SearchFilter,

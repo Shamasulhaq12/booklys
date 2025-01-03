@@ -37,10 +37,10 @@ class ForgetPasswordView(APIView):
             token_exists.delete()
             current_reset_token = reset_email_token(50)
             token = ForgetPassword.objects.create(
-                user=user, reset_email_token=current_reset_token)
+                user=user, token=current_reset_token)
             key = {
                 'username': user.username,
-                'button': settings.REACT_DOMAIN+'auth/reset-password/'+str(token.token),
+                'button': settings.REACT_DOMAIN+'/auth/reset-password/'+str(token.token),
                 'year': date.today().year
             }
             send_mail(subject="Reset Your Password", html_content="auth/forgetPassword.html",

@@ -11,11 +11,12 @@ from .views import (
 BookingDashboard,
 BookingPIChart,
 DashboardUserOccupancy,
-CustomerListAPIView
+CustomerListAPIView,
 
 )
 
 router = DefaultRouter()
+
 router.register('bookings', BookingsViewSet, basename='bookings')
 router.register('service-feedback', ServiceFeedbackViewSet, basename='service-feedback')
 router.register('client-feedback', ClientFeedbackViewSet, basename='client-feedback')
@@ -29,5 +30,4 @@ urlpatterns = [
     path('booking-dashboard/', BookingDashboard.as_view(), name='booking-dashboard'),
     path('booking-pi-chart/', BookingPIChart.as_view(), name='booking-pi-chart'),
     path('dashboard-user-occupancy/', DashboardUserOccupancy.as_view(), name='dashboard-user-occupancy'),
-
 ]

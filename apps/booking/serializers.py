@@ -20,6 +20,9 @@ class ClientFeedbackSerializer(serializers.ModelSerializer):
 
 
 class ServiceFeedbackSerializer(serializers.ModelSerializer):
+    user_first_name= serializers.CharField(source='user.first_name',read_only=True)
+    user_last_name= serializers.CharField(source='user.last_name',read_only=True)
+    
     class Meta:
         model = ServiceFeedback
         fields = '__all__'
@@ -38,15 +41,16 @@ class CustomerSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('created_at', 'updated_at')
 
-
 class BookingsSerializer(serializers.ModelSerializer):
     booking_feedback = ClientFeedbackSerializer(many=True, read_only=True)
     company_name = serializers.CharField(source='service.company.name', read_only=True)
     service_name = serializers.CharField(source='service.service_name', read_only=True)
     service_timing = serializers.CharField(source='service.service_timing', read_only=True)
     company_image = serializers.SerializerMethodField()
+    company_id= serializers.IntegerField(source='service.company.id',read_only=True)
     user_first_name = serializers.CharField(source='user.first_name', read_only=True)
     user_last_name = serializers.CharField(source='user.last_name', read_only=True)
+
 
 
     class Meta:
@@ -61,15 +65,15 @@ class BookingsSerializer(serializers.ModelSerializer):
 
 
 
-    def validate(self, attrs):
-
-        if attrs['booking_date'] < datetime.date.today():
-            raise serializers.ValidationError('Booking date cannot be in the past')
-        if attrs['start_booking_slot'] >= attrs['end_booking_slot']:
-            raise serializers.ValidationError('Start time must be before end time')
-        if is_slot_available(attrs['service'], attrs['booking_date'], attrs['start_booking_slot'], attrs['end_booking_slot']):
-            raise serializers.ValidationError('Slot is not available')
-        return attrs
+    # def validate(self, attrs):
+        
+    #     if attrs['booking_date'] < datetime.date.today():
+    #         raise serializers.ValidationError('Booking date cannot be in the past')
+    #     if attrs['start_booking_slot'] >= attrs['end_booking_slot']:
+    #         raise serializers.ValidationError('Start time must be before end time')
+    #     if is_slot_available(attrs['service'], attrs['booking_date'], attrs['start_booking_slot'], attrs['end_booking_slot']):
+    #         raise serializers.ValidationError('Slot is not available')
+    #     return attrs
 
 
 class JournalsSerializer(serializers.ModelSerializer):
