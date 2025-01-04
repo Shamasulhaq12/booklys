@@ -5,3 +5,6 @@ from .geolocations import (
 from .categories_managment import (
     CategoriesViewSet,PriceGroupViewSet,
 )
+from .templates import (
+    TemplatesViewSet,
+)

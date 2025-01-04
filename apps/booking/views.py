@@ -23,7 +23,7 @@ from apps.services.models import Services
 from django.shortcuts import get_object_or_404
 
 
-class KVYCodesViewSet(viewsets.ModelViewSet):
+class KVACodesViewSet(viewsets.ModelViewSet):
     serializer_class = KVYCodeSerializer
     queryset = KVYCodeSerializer.Meta.model.objects.all()
     pagination_class = OurLimitOffsetPagination

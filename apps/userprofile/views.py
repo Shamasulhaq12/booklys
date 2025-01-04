@@ -1,13 +1,24 @@
 from rest_framework import viewsets
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAdminUser
 from .models import UserProfile
 from rest_framework import filters
 from utils.paginations.pagination import LimitOffsetPagination
 from django_filters import rest_framework as backend_filters
 from .filters import UserProfileFilter
-from .serializers import UserProfileSerializer
+from .serializers import UserProfileSerializer, PatientFilesSerializer
 
 
+class PatientFilesViewSet(viewsets.ModelViewSet):
+    queryset = PatientFilesSerializer.Meta.model.objects.all()
+    serializer_class = PatientFilesSerializer
+    pagination_class = LimitOffsetPagination
+    permission_classes = IsAdminUser
+    filter_backends = [
+        backend_filters.DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+    filterset_fields = ['user','file_type']
 # Create your views here.
 class UserProfileViewSet(viewsets.ModelViewSet):
     pagination_class = LimitOffsetPagination

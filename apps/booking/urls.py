@@ -12,7 +12,7 @@ BookingDashboard,
 BookingPIChart,
 DashboardUserOccupancy,
 CustomerListAPIView,
-KVYCodesViewSet,
+    KVACodesViewSet,
 DiagnosisViewSet,
     JournalFilesDeleted
 
@@ -24,7 +24,7 @@ router.register('bookings', BookingsViewSet, basename='bookings')
 router.register('service-feedback', ServiceFeedbackViewSet, basename='service-feedback')
 router.register('client-feedback', ClientFeedbackViewSet, basename='client-feedback')
 router.register('journals', JournalsViewSet, basename='journals')
-router.register('kvy-codes', KVYCodesViewSet, basename='kvy-codes')
+router.register('kvy-codes', KVACodesViewSet, basename='kvy-codes')
 router.register('diagnosis', DiagnosisViewSet, basename='diagnosis')
 
 

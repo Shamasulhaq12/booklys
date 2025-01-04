@@ -32,6 +32,13 @@ class UserProfile(AbstractTimeStampModel):
     subscription_start_date = models.DateTimeField(null=True, blank=True)
     subscription_end_date = models.DateTimeField(null=True, blank=True)
     is_payment_verified = models.BooleanField(default=False)
+    mobile = models.CharField(max_length=255, null=True, blank=True)
+    family = models.CharField(max_length=255, null=True, blank=True)
+    address = models.TextField(null=True, blank=True)
+    location = models.CharField(max_length=255, null=True, blank=True)
+    other_info = models.TextField(null=True, blank=True)
+    tags = models.CharField(max_length=255, null=True, blank=True)
+    personal_number = models.CharField(max_length=255, null=True, blank=True)
     calling_code = models.ForeignKey(
         'assets.CallingCodeWithName', on_delete=models.CASCADE,
         related_name='user_country_codes',
@@ -56,3 +63,17 @@ class UserProfile(AbstractTimeStampModel):
     class Meta:
         verbose_name = 'User Profile'
         verbose_name_plural = 'User Profiles'
+
+class PatientFiles(AbstractTimeStampModel):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, related_name='patient_files')
+    file = models.FileField(upload_to='patient_files/')
+    file_type = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.user.first_name+' '+self.user.last_name
+
+    class Meta:
+        verbose_name = 'Patient File'
+        verbose_name_plural = 'Patient Files'
