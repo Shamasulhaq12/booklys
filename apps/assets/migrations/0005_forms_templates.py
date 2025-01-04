@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
                 ('image', models.ImageField(blank=True, null=True, upload_to='templates/images/')),
                 ('template_type', models.CharField(choices=[('text', 'text'), ('phrase', 'phrase'), ('drawing', 'drawing'), ('image', 'image'), ('marker', 'marker')], default='text', max_length=255)),
                 ('diagnosis', models.ManyToManyField(blank=True, related_name='templates', to='booking.diagnosis')),
-                ('kva_code', models.ManyToManyField(blank=True, related_name='templates', to='booking.kvacodes')),
+                ('kva_code', models.ManyToManyField(blank=True, related_name='templates', to='booking.kvycodes')),
             ],
             options={
                 'verbose_name_plural': 'Templates',

@@ -82,15 +82,15 @@ class ServiceFeedback(AB):
             models.Index(fields=['-created_at']),
         ]
 
-class KVACodes(AB):
+class KVYCodes(AB):
     code = models.CharField(max_length=255)
     description = models.TextField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
 
     class Meta:
-        verbose_name = 'KVA Code'
-        verbose_name_plural = 'KVA Codes'
-        db_table = 'kva_codes'
+        verbose_name = 'KVY Code'
+        verbose_name_plural = 'KVY Codes'
+        db_table = 'kvy_codes'
         ordering = ['-id']
         indexes = [
             models.Index(fields=['-id']),
@@ -115,7 +115,7 @@ class Diagnosis(AB):
 class Journals(AB):
     date = models.DateField()
     booking = models.ForeignKey(Bookings, on_delete=models.CASCADE, related_name='booking_journal', null=True, blank=True)
-    kvy_code = models.ManyToManyField(KVACodes, related_name='kvy_journal', blank=True)
+    kvy_code = models.ManyToManyField("booking.KVYCodes", related_name='kvy_journal_code', blank=True)
     diagnosis = models.ManyToManyField(Diagnosis, related_name='diagnosis_journal', blank=True)
     contact_name = models.CharField(max_length=255, null=True, blank=True)
     assessment = models.TextField(null=True, blank=True)

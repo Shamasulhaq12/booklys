@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Bookings, ClientFeedback, ServiceFeedback, Journals, KVACodes, Diagnosis, JournalFiles
+from .models import Bookings, ClientFeedback, ServiceFeedback, Journals, KVYCodes, Diagnosis, JournalFiles
 from apps.userprofile.models import UserProfile
 
 
@@ -76,7 +76,7 @@ class BookingsSerializer(serializers.ModelSerializer):
 
 class KVYCodeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = KVACodes
+        model = KVYCodes
         fields = ['id', 'code', 'description', 'is_active']
 
 class DiagnosisSerializer(serializers.ModelSerializer):
@@ -102,7 +102,7 @@ class JournalSerializer(serializers.ModelSerializer):
         ]
 
 class JournalCreateUpdateSerializer(serializers.ModelSerializer):
-    kvy_code = serializers.PrimaryKeyRelatedField(queryset=KVACodes.objects.all(), many=True)
+    kvy_code = serializers.PrimaryKeyRelatedField(queryset=KVYCodes.objects.all(), many=True)
     diagnosis = serializers.PrimaryKeyRelatedField(queryset=Diagnosis.objects.all(), many=True)
     journal_files = JournalFilesSerializer(many=True)
 

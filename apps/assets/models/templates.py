@@ -13,7 +13,7 @@ class Templates(AbstractTimeStampModel):
     title = models.CharField(max_length=255, null=True, blank=True)
     description = models.TextField(null=True, blank=True)
     shortcut = models.CharField(max_length=255, null=True, blank=True)
-    kva_code = models.ManyToManyField('booking.KVACodes', related_name='templates', blank=True)
+    kva_code = models.ManyToManyField('booking.KVYCodes', related_name='kvy_templates', blank=True)
     diagnosis = models.ManyToManyField('booking.Diagnosis', related_name='templates', blank=True)
     contact_case = models.CharField(max_length=255, null=True, blank=True)
     assessment = models.TextField(null=True, blank=True)
