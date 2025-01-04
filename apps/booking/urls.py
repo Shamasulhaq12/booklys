@@ -12,6 +12,9 @@ BookingDashboard,
 BookingPIChart,
 DashboardUserOccupancy,
 CustomerListAPIView,
+KVYCodesViewSet,
+DiagnosisViewSet,
+    JournalFilesDeleted
 
 )
 
@@ -21,9 +24,13 @@ router.register('bookings', BookingsViewSet, basename='bookings')
 router.register('service-feedback', ServiceFeedbackViewSet, basename='service-feedback')
 router.register('client-feedback', ClientFeedbackViewSet, basename='client-feedback')
 router.register('journals', JournalsViewSet, basename='journals')
+router.register('kvy-codes', KVYCodesViewSet, basename='kvy-codes')
+router.register('diagnosis', DiagnosisViewSet, basename='diagnosis')
+
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('journal-files-deleted/<int:pk>/', JournalFilesDeleted.as_view(), name='journal-files-deleted'),
     path('customer-list/', CustomerListAPIView.as_view(), name='customer-list'),
     path('booking-details-for-calender-listing/', BookingDetailsForCalenderListing.as_view(), name='booking-details-for-calender-listing'),
     path('booking-users-list/', BookingUsersList.as_view(), name='booking-users-list'),

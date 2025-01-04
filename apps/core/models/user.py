@@ -82,6 +82,10 @@ class User(AbstractBaseUser, AbstractTimeStampModel):
 
     def __str__(self):
         return self.email
+    def get_full_name(self):
+        if self.profile:
+            return f"{self.profile.first_name} {self.profile.last_name}"
+
 
     def has_perm(self, perm, obj=None):
         "Does the user have a specific permission?"

@@ -82,12 +82,41 @@ class ServiceFeedback(AB):
             models.Index(fields=['-created_at']),
         ]
 
+class KVYCodes(AB):
+    code = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'KVY Code'
+        verbose_name_plural = 'KVY Codes'
+        db_table = 'kvy_codes'
+        ordering = ['-id']
+        indexes = [
+            models.Index(fields=['-id']),
+            models.Index(fields=['-created_at']),
+        ]
+class Diagnosis(AB):
+    code = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Diagnosis'
+        verbose_name_plural = 'Diagnosis'
+        db_table = 'diagnosis'
+        ordering = ['-id']
+        indexes = [
+            models.Index(fields=['-id']),
+            models.Index(fields=['-created_at']),
+        ]
+
 
 class Journals(AB):
     date = models.DateField()
     booking = models.ForeignKey(Bookings, on_delete=models.CASCADE, related_name='booking_journal', null=True, blank=True)
-    diagnosis = models.TextField(null=True, blank=True)
-    kvy_code = models.CharField(max_length=255, null=True, blank=True)
+    kvy_code = models.ManyToManyField(KVYCodes, related_name='kvy_journal', blank=True)
+    diagnosis = models.ManyToManyField(Diagnosis, related_name='diagnosis_journal', blank=True)
     contact_name = models.CharField(max_length=255, null=True, blank=True)
     assessment = models.TextField(null=True, blank=True)
     action = models.TextField(null=True, blank=True)
@@ -107,3 +136,20 @@ class Journals(AB):
             models.Index(fields=['-id']),
             models.Index(fields=['-created_at']),
         ]
+
+
+class JournalFiles(AB):
+    journal = models.ForeignKey(Journals, on_delete=models.CASCADE, related_name='journal_files')
+    file = models.FileField(upload_to='journals/files/', blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Journal File'
+        verbose_name_plural = 'Journal Files'
+        db_table = 'journal_files'
+        ordering = ['-id']
+        indexes = [
+            models.Index(fields=['-id']),
+            models.Index(fields=['-created_at']),
+        ]
+

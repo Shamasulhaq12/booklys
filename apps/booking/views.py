@@ -1,24 +1,54 @@
 from rest_framework import viewsets
-from .serializers import BookingsSerializer, ClientFeedbackSerializer, ServiceFeedbackSerializer, JournalsSerializer, BookingUserSerializer,CustomerSerializer
+from .serializers import (
+    BookingsSerializer,
+                          ClientFeedbackSerializer, JournalSerializer, JournalCreateUpdateSerializer,
+                          DiagnosisSerializer, ServiceFeedbackSerializer, BookingUserSerializer, KVYCodeSerializer,
+                          CustomerSerializer,JournalFilesSerializer
+                          )
 from rest_framework import filters
 from apps.services.models import CompanyStaff
 from rest_framework.views import APIView
 from django_filters import rest_framework as backend_filters
 from .filters import BookingsFilter
 from rest_framework.response import Response
-from rest_framework.generics import ListAPIView
+from rest_framework.generics import ListAPIView,DestroyAPIView
 from rest_framework import status
 from utils.paginations import OurLimitOffsetPagination
 from apps.userprofile.models import UserProfile
 from datetime import datetime
-from django.db.models import Sum
 from django.db.models.functions import ExtractMonth
 from django.db.models import Count
 import calendar
-
 from apps.services.models import Services
 from django.shortcuts import get_object_or_404
 
+
+class KVYCodesViewSet(viewsets.ModelViewSet):
+    serializer_class = KVYCodeSerializer
+    queryset = KVYCodeSerializer.Meta.model.objects.all()
+    pagination_class = OurLimitOffsetPagination
+
+
+class DiagnosisViewSet(viewsets.ModelViewSet):
+    serializer_class = DiagnosisSerializer
+    queryset = DiagnosisSerializer.Meta.model.objects.all()
+    pagination_class = OurLimitOffsetPagination
+
+
+class JournalFilesDeleted(DestroyAPIView):
+    serializer_class = JournalFilesSerializer
+    queryset = JournalFilesSerializer.Meta.model.objects.all()
+    pagination_class = OurLimitOffsetPagination
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated:
+
+            if self.request.user.user_type in ['owner','staff','admin','super_admin']:
+                queryset =self.queryset
+                return queryset
+            queryset = self.queryset.filter(journal__user=self.request.user.profile)
+            return queryset
+        return self.queryset.none()
 
 class CustomerListAPIView(ListAPIView):
     queryset = UserProfile.objects.all()
@@ -153,24 +183,28 @@ class BookingDetailsForCalenderListing(APIView):
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class JournalsViewSet(viewsets.ModelViewSet):
-    serializer_class = JournalsSerializer
-    queryset = JournalsSerializer.Meta.model.objects.all()
+    queryset = JournalSerializer.Meta.model.objects.all()
     filter_backends = [
         filters.SearchFilter,
         filters.OrderingFilter,
         backend_filters.DjangoFilterBackend,
     ]
-    search_fields = ['name', 'description']
+    search_fields = ['contact_name']
     ordering_fields = ['id', 'created_at', 'updated_at']
-    filterset_fields = ['name', 'description','owner']
+    filterset_fields = ['contact_name', 'owner']
     pagination_class = OurLimitOffsetPagination
+    def get_serializer_class(self):
+        if self.action in ['create', 'update']:
+            return JournalCreateUpdateSerializer
+        return JournalSerializer
+
     def get_queryset(self):
-        queryset = self.queryset.filter(user=self.request.user.profile)
-        return queryset
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user.profile)
-
+        if self.request.user.is_authenticated:
+            if self.request.user.user_type in ['owner','staff','admin','super_admin']:
+                return self.queryset
+            queryset = self.queryset.filter(booking__user=self.request.user.profile)
+            return queryset
+        return self.queryset.none()
 
 
 class ClientFeedbackViewSet(viewsets.ModelViewSet):
@@ -241,7 +275,7 @@ class BookingsViewSet(viewsets.ModelViewSet):
         filters.OrderingFilter,
         backend_filters.DjangoFilterBackend,
     ]
-    search_fields = ['name', 'description', 'total_price']
+    search_fields = [ 'description', 'total_price']
     ordering_fields = ['id', 'total_price', 'created_at', 'updated_at']
     filterset_class = BookingsFilter
     pagination_class = OurLimitOffsetPagination
@@ -273,18 +307,6 @@ class BookingsViewSet(viewsets.ModelViewSet):
                 if service.is_free:
                     total_price += service.price
         serializer.save(total_price=total_price)
-        booking_status = serializer.validated_data.get('booking_status',None)
-        if booking_status:
-            if booking_status=="Completed":
-                JournalsSerializer.Meta.model.objects.create(
-                    user=instance.service.company.owner,
-                    name=instance.user.first_name+" "+instance.user.last_name,
-                    email=instance.user.user.email,
-                    phone=instance.phone,
-                    owner=instance.user,
-                    description=f"Booking for {instance.service.service_name} has been completed. Total Price: {instance.total_price}.",
-                    price=instance.total_price,
-                )
 
 
 

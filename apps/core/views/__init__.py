@@ -9,3 +9,4 @@ from .accountactivation import AccountActivationAPIView
 from .resend_activation import ResendActivationAPIView
 from .login import CustomTokenObtainPairView
 from .contact_us import ContactUsCreateAPIView
+from .loghistory import LogHistoryView

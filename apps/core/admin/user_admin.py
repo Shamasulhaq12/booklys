@@ -4,7 +4,12 @@ from apps.core.models import (
     CompanyInfo,
     UserActivation,
     ForgetPassword,
+    LogEntry,
 )
+
+@admin.register(LogEntry)
+class LogEntryAdmin(admin.ModelAdmin):
+    pass
 
 
 @admin.register(ForgetPassword)

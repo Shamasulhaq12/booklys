@@ -1,8 +1,6 @@
 from rest_framework import serializers
-from .models import Bookings, ClientFeedback, ServiceFeedback, Journals
+from .models import Bookings, ClientFeedback, ServiceFeedback, Journals, KVYCodes, Diagnosis, JournalFiles
 from apps.userprofile.models import UserProfile
-import datetime
-from .helper import is_slot_available
 
 
 class BookingUserSerializer(serializers.ModelSerializer):
@@ -76,8 +74,69 @@ class BookingsSerializer(serializers.ModelSerializer):
     #     return attrs
 
 
-class JournalsSerializer(serializers.ModelSerializer):
+class KVYCodeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = KVYCodes
+        fields = ['id', 'code', 'description', 'is_active']
+
+class DiagnosisSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Diagnosis
+        fields = ['id', 'code', 'description', 'is_active']
+
+class JournalFilesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JournalFiles
+        fields = ['id', 'file', 'is_active']
+
+class JournalSerializer(serializers.ModelSerializer):
+    kvy_code = KVYCodeSerializer(many=True)
+    diagnosis = DiagnosisSerializer(many=True)
+    journal_files = JournalFilesSerializer(many=True)
+
     class Meta:
         model = Journals
-        fields = '__all__'
-        read_only_fields = ('created_at', 'updated_at')
+        fields = [
+            'id', 'date', 'booking', 'kvy_code', 'diagnosis', 'contact_name',
+            'assessment', 'action', 'description', 'phone', 'user', 'owner', 'price','journal_files'
+        ]
+
+class JournalCreateUpdateSerializer(serializers.ModelSerializer):
+    kvy_code = serializers.PrimaryKeyRelatedField(queryset=KVYCodes.objects.all(), many=True)
+    diagnosis = serializers.PrimaryKeyRelatedField(queryset=Diagnosis.objects.all(), many=True)
+    journal_files = JournalFilesSerializer(many=True)
+
+    class Meta:
+        model = Journals
+        fields = [
+            'date', 'booking', 'kvy_code', 'diagnosis', 'contact_name',
+            'assessment', 'action', 'description', 'phone', 'user', 'owner', 'price','journal_files'
+        ]
+
+    def create(self, validated_data):
+        kvy_code = validated_data.pop('kvy_code', [])
+        diagnosis = validated_data.pop('diagnosis', [])
+        journal_files = validated_data.pop('journal_files', [])
+        journal = Journals.objects.create(**validated_data)
+        journal.kvy_code.set(kvy_code)
+        journal.diagnosis.set(diagnosis)
+        if journal_files:
+            journal_files = JournalFilesSerializer(data=journal_files, many=True)
+            journal_files.is_valid(raise_exception=True)
+            journal_files.save(journal=journal)
+        return journal
+
+    def update(self, instance, validated_data):
+        kvy_code = validated_data.pop('kvy_code', [])
+        diagnosis = validated_data.pop('diagnosis', [])
+        journal_files = validated_data.pop('journal_files', [])
+
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        journal_files = JournalFilesSerializer(instance.journal_files.all(), data=journal_files, many=True)
+        journal_files.is_valid(raise_exception=True)
+        journal_files.save(journal=instance)
+        instance.kvy_code.set(kvy_code)
+        instance.diagnosis.set(diagnosis)
+        return instance
